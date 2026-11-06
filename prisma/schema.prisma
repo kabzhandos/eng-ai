@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// prisma/schema.prisma
+datasource db {
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+  // uncomment next line if you use Prisma <5.10
+  // directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String
+  fullName      String
+  role          String    @default("STUDENT") // STUDENT, TEACHER, ADMIN
+  currentLevel  String    @default("A1")      // A1, A2, B1, B2
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Teacher relations
+  classesCreated Class[]  @relation("TeacherClasses")
+
+  // Student relations
+  enrolledClasses     ClassMember[]
+  attempts            StudentAttempt[]
+  topicProgress       StudentTopicProgress[]
+  bufferedQuestions   QuestionBuffer[]
+}
+
+model Class {
+  id          String   @id @default(uuid())
+  name        String
+  inviteCode  String   @unique
+  teacherId   String
+  teacher     User     @relation("TeacherClasses", fields: [teacherId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  members     ClassMember[]
+}
+
+model ClassMember {
+  id        String   @id @default(uuid())
+  classId   String
+  studentId String
+  joinedAt  DateTime @default(now())
+
+  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([classId, studentId])
+}
+
+model GrammarTopic {
+  id                String        @id @default(uuid())
+  level             String        // A1, A2, B1, B2
+  title             String
+  slug              String        @unique
+  description       String?
+  systemPromptRules String
+  orderIndex        Int           @default(0)
+  parentTopicId     String?
+  parentTopic       GrammarTopic? @relation("TopicHierarchy", fields: [parentTopicId], references: [id])
+  childTopics       GrammarTopic[] @relation("TopicHierarchy")
+
+  bufferedQuestions QuestionBuffer[]
+  attempts          StudentAttempt[]
+  progressRecords   StudentTopicProgress[]
+}
+
+model QuestionBuffer {
+  id           String       @id @default(uuid())
+  userId       String
+  topicId      String
+  questionType String
+  payload      String       // JSON string for SQLite portability
+  isServed     Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic        GrammarTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@index([userId, topicId, isServed])
+}
+
+model StudentAttempt {
+  id              String       @id @default(uuid())
+  userId          String
+  topicId         String
+  questionPayload String       // JSON string for SQLite portability
+  studentAnswer   String
+  isCorrect       Boolean
+  aiExplanation   String?
+  createdAt       DateTime     @default(now())
+
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic           GrammarTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@index([userId, topicId, isCorrect])
+}
+
+model StudentTopicProgress {
+  id                 String       @id @default(uuid())
+  userId             String
+  topicId            String
+  totalAttempts      Int          @default(0)
+  consecutiveCorrect Int          @default(0)
+  failedAttempts     Int          @default(0)
+  isMastered         Boolean      @default(false)
+  isBottleneck       Boolean      @default(false)
+  lastPracticedAt    DateTime     @default(now())
+
+  user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic              GrammarTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, topicId])
+}
