@@ -124,15 +124,29 @@ export default async function HomePage() {
     );
   }
 
-  // Student Dashboard: Grammar Topic Tree
-  const topics = await prisma.grammarTopic.findMany({
-    orderBy: { orderIndex: 'asc' },
-    include: {
-      progressRecords: {
-        where: { userId: user.userId },
+  // Student Dashboard: Grammar Topic Tree & Enrolled Class Focus Topic
+  const [topics, enrolledMembership] = await Promise.all([
+    prisma.grammarTopic.findMany({
+      orderBy: { orderIndex: 'asc' },
+      include: {
+        progressRecords: {
+          where: { userId: user.userId },
+        },
       },
-    },
-  });
+    }),
+    prisma.classMember.findFirst({
+      where: { studentId: user.userId },
+      include: {
+        class: {
+          include: {
+            focusTopic: true,
+          },
+        },
+      },
+    }),
+  ]);
+
+  const teacherFocusTopic = enrolledMembership?.class?.focusTopic;
 
   const levelOrder: CefrLevel[] = ['A1', 'A2', 'B1', 'B2'];
   const topicsByLevel: Record<CefrLevel, typeof topics> = {
@@ -190,6 +204,32 @@ export default async function HomePage() {
           </div>
         </div>
       </div>
+
+      {/* Teacher Focus Assignment Banner */}
+      {teacherFocusTopic && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/40 dark:to-purple-950/40 border border-indigo-200/80 dark:border-indigo-900/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+              <Target className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">
+                Задание от преподавателя ({enrolledMembership?.class?.name})
+              </span>
+              <h2 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
+                Фокус недели: [{teacherFocusTopic.level}] {teacherFocusTopic.title}
+              </h2>
+            </div>
+          </div>
+          <Link
+            href={`/practice/${teacherFocusTopic.id}`}
+            className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-xs transition-colors flex items-center justify-center gap-1.5 self-start sm:self-auto"
+          >
+            <span>Выполнить задание</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      )}
 
       {/* Topics Tree by CEFR Levels */}
       <div className="space-y-8">

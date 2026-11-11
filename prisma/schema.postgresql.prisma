@@ -38,14 +38,16 @@ model User {
 }
 
 model Class {
-  id          String   @id @default(uuid())
-  name        String
-  inviteCode  String   @unique
-  teacherId   String
-  teacher     User     @relation("TeacherClasses", fields: [teacherId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
+  id           String        @id @default(uuid())
+  name         String
+  inviteCode   String        @unique
+  teacherId    String
+  teacher      User          @relation("TeacherClasses", fields: [teacherId], references: [id], onDelete: Cascade)
+  focusTopicId String?
+  focusTopic   GrammarTopic? @relation("ClassFocusTopic", fields: [focusTopicId], references: [id], onDelete: SetNull)
+  createdAt    DateTime      @default(now())
 
-  members     ClassMember[]
+  members      ClassMember[]
 }
 
 model ClassMember {
@@ -71,6 +73,7 @@ model GrammarTopic {
   parentTopicId     String?
   parentTopic       GrammarTopic? @relation("TopicHierarchy", fields: [parentTopicId], references: [id])
   childTopics       GrammarTopic[] @relation("TopicHierarchy")
+  focusedClasses    Class[]        @relation("ClassFocusTopic")
 
   bufferedQuestions QuestionBuffer[]
   attempts          StudentAttempt[]
