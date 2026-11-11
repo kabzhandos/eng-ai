@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { Sparkles, LogOut, GraduationCap, Users, BarChart3, HelpCircle } from 'lucide-react';
+import { Sparkles, LogOut, GraduationCap, Users, BarChart3, HelpCircle, Sun, Moon } from 'lucide-react';
 import { AuthSession } from '@/types';
 import FaqModal from './FaqModal';
 
@@ -12,6 +12,14 @@ export default function Navbar({ initialUser }: { initialUser?: AuthSession | nu
   const pathname = usePathname();
   const [user, setUser] = useState<AuthSession | null>(initialUser || null);
   const [isFaqOpen, setIsFaqOpen] = useState(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const isDark = document.documentElement.classList.contains('dark');
+    setTheme(isDark ? 'dark' : 'light');
+  }, []);
 
   useEffect(() => {
     fetch('/api/auth/me')
@@ -25,6 +33,19 @@ export default function Navbar({ initialUser }: { initialUser?: AuthSession | nu
       })
       .catch(() => {});
   }, [pathname]);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
+    if (nextTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    try {
+      localStorage.setItem('engai_theme', nextTheme);
+    } catch {}
+  };
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
@@ -54,10 +75,24 @@ export default function Navbar({ initialUser }: { initialUser?: AuthSession | nu
 
           {/* Right Navigation */}
           <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* Theme Toggle (Light / Dark) */}
+            <button
+              onClick={toggleTheme}
+              aria-label={theme === 'dark' ? 'Включить светлую тему' : 'Включить тёмную тему'}
+              title={theme === 'dark' ? 'Включить светлую тему' : 'Включить тёмную тему'}
+              className="btn-tactile p-2 rounded-xl text-stone-600 dark:text-stone-300 bg-white/80 dark:bg-[#19202E] hover:bg-white dark:hover:bg-[#20293A] border border-[#EEE8DE] dark:border-[#273145] shadow-2xs transition-all flex items-center justify-center"
+            >
+              {mounted && theme === 'dark' ? (
+                <Sun className="w-4 h-4 text-amber-400 animate-in fade-in zoom-in-75 duration-200" />
+              ) : (
+                <Moon className="w-4 h-4 text-indigo-500 animate-in fade-in zoom-in-75 duration-200" />
+              )}
+            </button>
+
             {/* FAQ Button */}
             <button
               onClick={() => setIsFaqOpen(true)}
-              className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl text-stone-600 dark:text-stone-300 bg-white/70 dark:bg-stone-800/50 hover:bg-white dark:hover:bg-stone-800 border border-stone-200/70 dark:border-stone-700/60 shadow-2xs transition-all"
+              className="btn-tactile flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl text-stone-600 dark:text-stone-300 bg-white/80 dark:bg-[#19202E] hover:bg-white dark:hover:bg-[#20293A] border border-[#EEE8DE] dark:border-[#273145] shadow-2xs transition-all"
               title="Часто задаваемые вопросы"
             >
               <HelpCircle className="w-3.5 h-3.5 text-indigo-500" />
@@ -69,7 +104,7 @@ export default function Navbar({ initialUser }: { initialUser?: AuthSession | nu
                 {user.role === 'TEACHER' ? (
                   <Link
                     href="/teacher"
-                    className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200/70 dark:border-purple-800 hover:bg-purple-100 transition-colors"
+                    className="btn-tactile flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200/70 dark:border-purple-800 hover:bg-purple-100 transition-colors"
                   >
                     <Users className="w-3.5 h-3.5" />
                     <span className="hidden sm:inline">Панель учителя</span>
@@ -78,7 +113,7 @@ export default function Navbar({ initialUser }: { initialUser?: AuthSession | nu
                   <>
                     <Link
                       href="/analytics"
-                      className="hidden sm:flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl text-stone-600 dark:text-stone-300 bg-white/70 dark:bg-stone-800/50 hover:bg-white dark:hover:bg-stone-800 border border-stone-200/70 dark:border-stone-700/60 shadow-2xs transition-all"
+                      className="btn-tactile hidden sm:flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl text-stone-600 dark:text-stone-300 bg-white/80 dark:bg-[#19202E] hover:bg-white dark:hover:bg-[#20293A] border border-[#EEE8DE] dark:border-[#273145] shadow-2xs transition-all"
                       title="Моя статистика"
                     >
                       <BarChart3 className="w-3.5 h-3.5 text-indigo-500" />
@@ -112,13 +147,13 @@ export default function Navbar({ initialUser }: { initialUser?: AuthSession | nu
               <div className="flex items-center gap-2">
                 <Link
                   href="/login"
-                  className="text-xs font-semibold px-3 py-1.5 rounded-xl text-stone-700 dark:text-stone-300 hover:bg-white/80 dark:hover:bg-stone-800 transition-colors"
+                  className="text-xs font-bold px-3 py-1.5 rounded-xl text-stone-700 dark:text-stone-300 hover:bg-white/80 dark:hover:bg-stone-800 transition-colors"
                 >
                   Вход
                 </Link>
                 <Link
                   href="/register"
-                  className="text-xs font-semibold px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all"
+                  className="btn-tactile text-xs font-bold px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all"
                 >
                   Регистрация
                 </Link>

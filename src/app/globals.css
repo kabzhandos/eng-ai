@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #faf8f5;
   --foreground: #1c2230;
@@ -10,16 +12,14 @@
   --primary-hover: #4338ca;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #121620;
-    --foreground: #edf2f7;
-    --surface: #19202e;
-    --surface-border: #273145;
-    --accent-soft: #1d2536;
-    --primary: #6366f1;
-    --primary-hover: #4f46e5;
-  }
+.dark {
+  --background: #121620;
+  --foreground: #edf2f7;
+  --surface: #19202e;
+  --surface-border: #273145;
+  --accent-soft: #1d2536;
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
 }
 
 body {
@@ -43,10 +43,8 @@ body {
   z-index: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  .ambient-glow {
-    background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.12) 0%, rgba(245, 158, 11, 0.03) 45%, transparent 75%);
-  }
+.dark .ambient-glow {
+  background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.12) 0%, rgba(245, 158, 11, 0.03) 45%, transparent 75%);
 }
 
 /* Tactile 3D Button feel (Duolingo style) */
