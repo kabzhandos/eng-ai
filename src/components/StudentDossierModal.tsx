@@ -70,6 +70,8 @@ export interface StudentDossier {
   topicProgress: StudentTopicRecord[];
   questionFlags?: QuestionFlagRecord[];
   pendingFlagsCount?: number;
+  isStudentArchived?: boolean;
+  studentArchivedAt?: string | null;
 }
 
 export default function StudentDossierModal({

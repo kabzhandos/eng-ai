@@ -47,13 +47,15 @@ model Class {
 }
 
 model ClassMember {
-  id        String   @id @default(uuid())
-  classId   String
-  studentId String
-  joinedAt  DateTime @default(now())
+  id         String    @id @default(uuid())
+  classId    String
+  studentId  String
+  joinedAt   DateTime  @default(now())
+  isArchived Boolean   @default(false)
+  archivedAt DateTime?
 
-  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
-  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  class      Class     @relation(fields: [classId], references: [id], onDelete: Cascade)
+  student    User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([classId, studentId])
 }

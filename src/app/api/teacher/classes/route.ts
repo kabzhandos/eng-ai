@@ -84,7 +84,7 @@ export async function GET() {
     let totalStudents = cls.members.length;
     let focusCompletedCount = 0;
 
-    const formattedStudents = cls.members.map(({ student, joinedAt }) => {
+    const formattedStudents = cls.members.map(({ student, joinedAt, isArchived, archivedAt }) => {
       const totalAttempts = student.attempts.length;
       const correctAttempts = student.attempts.filter((a) => a.isCorrect).length;
       const accuracy = totalAttempts > 0 ? Math.round((correctAttempts / totalAttempts) * 100) : 0;
@@ -177,6 +177,8 @@ export async function GET() {
         })),
         questionFlags: formattedFlags,
         pendingFlagsCount: formattedFlags.filter((f) => f.status === 'PENDING').length,
+        isStudentArchived: Boolean(isArchived),
+        studentArchivedAt: archivedAt ? archivedAt.toISOString() : null,
       };
     });
 

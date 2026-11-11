@@ -277,10 +277,10 @@ export default async function HomePage() {
             lvl === 'A1'
               ? 'Начальный — базовые конструкции и привычки'
               : lvl === 'A2'
-              ? 'Элементарный — прошедшее время и сравнения'
-              : lvl === 'B1'
-              ? 'Средний — времена Perfect и Conditionals 1-2'
-              : 'Выше среднего — пассивный залог и сложные модальные глаголы';
+                ? 'Элементарный — прошедшее время и сравнения'
+                : lvl === 'B1'
+                  ? 'Средний — времена Perfect и Conditionals 1-2'
+                  : 'Выше среднего — пассивный залог и сложные модальные глаголы';
 
           return (
             <div key={lvl} className="space-y-3.5">
@@ -303,13 +303,12 @@ export default async function HomePage() {
                   return (
                     <div
                       key={topic.id}
-                      className={`p-5 rounded-3xl border transition-all flex flex-col justify-between bg-white dark:bg-[#19202E] ${
-                        isMastered
+                      className={`p-5 rounded-3xl border transition-all flex flex-col justify-between bg-white dark:bg-[#19202E] ${isMastered
                           ? 'border-emerald-300/80 dark:border-emerald-800/80 shadow-2xs'
                           : isBottleneck
-                          ? 'border-amber-300 dark:border-amber-800/80 shadow-2xs'
-                          : 'border-[#EEE8DE] dark:border-[#273145] hover:border-indigo-300 dark:hover:border-indigo-700 shadow-[0_2px_12px_rgba(0,0,0,0.02)]'
-                      }`}
+                            ? 'border-amber-300 dark:border-amber-800/80 shadow-2xs'
+                            : 'border-[#EEE8DE] dark:border-[#273145] hover:border-indigo-300 dark:hover:border-indigo-700 shadow-[0_2px_12px_rgba(0,0,0,0.02)]'
+                        }`}
                     >
                       <div>
                         <div className="flex items-center justify-between mb-2.5">
