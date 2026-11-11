@@ -35,29 +35,29 @@ export default function Navbar({ initialUser }: { initialUser?: AuthSession | nu
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
+      <header className="sticky top-0 z-40 bg-[#FAF8F5]/85 dark:bg-[#121620]/85 backdrop-blur-md border-b border-[#EEE8DE] dark:border-[#242C3D] transition-colors">
         <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
           {/* Brand */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-              <Sparkles className="w-5 h-5" />
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-indigo-500 via-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-sm shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+              <Sparkles className="w-4 h-4 text-amber-200" />
             </div>
-            <div>
-              <span className="font-bold text-base sm:text-lg bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+            <div className="flex items-center gap-2">
+              <span className="font-extrabold text-base sm:text-lg text-stone-900 dark:text-stone-50 tracking-tight">
                 EngAI
               </span>
-              <span className="hidden sm:inline-block ml-2 text-[11px] font-medium px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
-                AI English Tutor
+              <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200/70 dark:border-amber-800/60">
+                <span>✨</span> ИИ-тьютор
               </span>
             </div>
           </Link>
 
           {/* Right Navigation */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-2.5">
             {/* FAQ Button */}
             <button
               onClick={() => setIsFaqOpen(true)}
-              className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200/60 dark:border-zinc-800 transition-colors"
+              className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl text-stone-600 dark:text-stone-300 bg-white/70 dark:bg-stone-800/50 hover:bg-white dark:hover:bg-stone-800 border border-stone-200/70 dark:border-stone-700/60 shadow-2xs transition-all"
               title="Часто задаваемые вопросы"
             >
               <HelpCircle className="w-3.5 h-3.5 text-indigo-500" />
@@ -69,7 +69,7 @@ export default function Navbar({ initialUser }: { initialUser?: AuthSession | nu
                 {user.role === 'TEACHER' ? (
                   <Link
                     href="/teacher"
-                    className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-800 hover:bg-purple-100 transition-colors"
+                    className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200/70 dark:border-purple-800 hover:bg-purple-100 transition-colors"
                   >
                     <Users className="w-3.5 h-3.5" />
                     <span className="hidden sm:inline">Панель учителя</span>
@@ -78,24 +78,24 @@ export default function Navbar({ initialUser }: { initialUser?: AuthSession | nu
                   <>
                     <Link
                       href="/analytics"
-                      className="hidden sm:flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200/60 dark:border-zinc-800 transition-colors"
+                      className="hidden sm:flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl text-stone-600 dark:text-stone-300 bg-white/70 dark:bg-stone-800/50 hover:bg-white dark:hover:bg-stone-800 border border-stone-200/70 dark:border-stone-700/60 shadow-2xs transition-all"
                       title="Моя статистика"
                     >
                       <BarChart3 className="w-3.5 h-3.5 text-indigo-500" />
                       <span>Аналитика</span>
                     </Link>
-                    <div className="flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                      <GraduationCap className="w-3 h-3" />
-                      <span>{user.currentLevel}</span>
+                    <div className="flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800">
+                      <GraduationCap className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                      <span>Уровень {user.currentLevel}</span>
                     </div>
                   </>
                 )}
 
-                <div className="hidden md:flex flex-col text-right">
-                  <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 leading-tight">
+                <div className="hidden md:flex flex-col text-right pl-1">
+                  <span className="text-xs font-bold text-stone-800 dark:text-stone-100 leading-tight">
                     {user.fullName}
                   </span>
-                  <span className="text-[10px] text-zinc-400">
+                  <span className="text-[10px] text-stone-400">
                     {user.role === 'TEACHER' ? 'Преподаватель' : 'Ученик'}
                   </span>
                 </div>
@@ -103,7 +103,7 @@ export default function Navbar({ initialUser }: { initialUser?: AuthSession | nu
                 <button
                   onClick={handleLogout}
                   title="Выйти"
-                  className="p-1.5 rounded-lg text-zinc-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
+                  className="p-1.5 rounded-xl text-stone-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors ml-1"
                 >
                   <LogOut className="w-4 h-4" />
                 </button>
@@ -112,13 +112,13 @@ export default function Navbar({ initialUser }: { initialUser?: AuthSession | nu
               <div className="flex items-center gap-2">
                 <Link
                   href="/login"
-                  className="text-xs font-medium px-3 py-1.5 rounded-lg text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                  className="text-xs font-semibold px-3 py-1.5 rounded-xl text-stone-700 dark:text-stone-300 hover:bg-white/80 dark:hover:bg-stone-800 transition-colors"
                 >
                   Вход
                 </Link>
                 <Link
                   href="/register"
-                  className="text-xs font-semibold px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white shadow-xs hover:bg-indigo-700 transition-colors"
+                  className="text-xs font-semibold px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all"
                 >
                   Регистрация
                 </Link>

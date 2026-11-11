@@ -154,8 +154,13 @@ export default function TeacherDashboard() {
   if (loading) {
     return (
       <div className="py-20 text-center">
-        <div className="w-9 h-9 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-        <p className="text-xs text-zinc-500">Загрузка данных преподавателя...</p>
+        <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center animate-bounce mx-auto mb-3 text-2xl">
+          👨‍🏫
+        </div>
+        <p className="text-sm font-bold text-stone-800 dark:text-stone-200">
+          Загрузка кабинета преподавателя...
+        </p>
+        <p className="text-xs text-stone-400 mt-1">Подготовка аналитики и слепых зон классов</p>
       </div>
     );
   }
@@ -174,22 +179,24 @@ export default function TeacherDashboard() {
   return (
     <div className="space-y-6 max-w-5xl mx-auto w-full">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-zinc-200/60 dark:border-zinc-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#EEE8DE] dark:border-[#273145]">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
-            <Users className="w-5 h-5 text-indigo-600" />
-            Кабинет преподавателя
-          </h1>
-          <p className="text-xs text-zinc-500 mt-0.5">
-            Управление учебными группами, слепые зоны и аналитика успеваемости
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">📚</span>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-stone-900 dark:text-stone-50">
+              Кабинет преподавателя
+            </h1>
+          </div>
+          <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+            Управление группами, слепые зоны класса и персональная диагностика
           </p>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <button
             onClick={() => setIsSettingsOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-semibold text-zinc-700 dark:text-zinc-300 transition-colors"
+            className="btn-tactile flex items-center gap-1.5 px-3.5 py-2 rounded-2xl border border-[#EEE8DE] dark:border-[#273145] bg-white dark:bg-[#19202E] text-xs font-bold text-stone-700 dark:text-stone-200 shadow-sm"
             title="Включить / отключить отображение метрик"
           >
             <SlidersHorizontal className="w-3.5 h-3.5 text-indigo-500" />
@@ -198,7 +205,7 @@ export default function TeacherDashboard() {
 
           <button
             onClick={() => setShowCreateForm(!showCreateForm)}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-xs transition-colors"
+            className="btn-tactile flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-indigo-600 text-white text-xs font-bold shadow-sm"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Новый класс</span>
@@ -206,41 +213,53 @@ export default function TeacherDashboard() {
         </div>
       </div>
 
-      {/* Summary KPI Cards (Лаконичный вид) */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800 shadow-xs">
-          <span className="block text-[11px] font-semibold text-zinc-400">Всего учеников</span>
-          <span className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-0.5 block">
+      {/* Summary KPI Cards (Warm Cozy Paper Style) */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+        <div className="p-4 rounded-3xl bg-white dark:bg-[#19202E] border border-[#EEE8DE] dark:border-[#273145] shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-stone-400">Всего учеников</span>
+            <span className="text-base">👥</span>
+          </div>
+          <span className="text-2xl font-extrabold text-stone-900 dark:text-stone-100 mt-1 block">
             {totalStudents}
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800 shadow-xs">
-          <span className="block text-[11px] font-semibold text-zinc-400">Групп / классов</span>
-          <span className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mt-0.5 block">
+        <div className="p-4 rounded-3xl bg-white dark:bg-[#19202E] border border-[#EEE8DE] dark:border-[#273145] shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-stone-400">Групп / классов</span>
+            <span className="text-base">🏫</span>
+          </div>
+          <span className="text-2xl font-extrabold text-stone-900 dark:text-stone-100 mt-1 block">
             {classes.length}
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800 shadow-xs">
-          <span className="block text-[11px] font-semibold text-zinc-400">Зон зависания</span>
-          <span className="text-xl font-bold text-rose-600 dark:text-rose-400 mt-0.5 block">
+        <div className="p-4 rounded-3xl bg-white dark:bg-[#19202E] border border-[#EEE8DE] dark:border-[#273145] shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-stone-400">Зон зависания</span>
+            <span className="text-base">⚠️</span>
+          </div>
+          <span className="text-2xl font-extrabold text-rose-600 dark:text-rose-400 mt-1 block">
             {totalBottlenecks}
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800 shadow-xs">
-          <span className="block text-[11px] font-semibold text-zinc-400">В зоне риска</span>
-          <span className="text-xl font-bold text-amber-500 mt-0.5 block">
-            {highRiskStudents} учеников
+        <div className="p-4 rounded-3xl bg-white dark:bg-[#19202E] border border-[#EEE8DE] dark:border-[#273145] shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-stone-400">В зоне риска</span>
+            <span className="text-base">🚨</span>
+          </div>
+          <span className="text-2xl font-extrabold text-amber-500 mt-1 block">
+            {highRiskStudents}
           </span>
         </div>
       </div>
 
       {/* Create Class Drawer / Form */}
       {showCreateForm && (
-        <div className="p-4 rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-200/80 dark:border-indigo-900/60 transition-all">
-          <h3 className="text-xs font-bold text-indigo-950 dark:text-indigo-200 mb-2">
+        <div className="p-5 rounded-3xl bg-[#FBF9F5] dark:bg-[#141A26] border border-[#EEE8DE] dark:border-[#273145] shadow-sm transition-all">
+          <h3 className="text-xs font-bold text-stone-900 dark:text-stone-100 mb-2.5">
             Создать новый класс
           </h3>
           <form onSubmit={handleCreateClass} className="flex flex-col sm:flex-row gap-2.5">
@@ -250,19 +269,19 @@ export default function TeacherDashboard() {
               value={newClassName}
               onChange={(e) => setNewClassName(e.target.value)}
               placeholder="Название (например: 10-А класс Английский)"
-              className="flex-1 px-3.5 py-2 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="flex-1 px-4 py-2.5 text-xs rounded-2xl border border-[#EEE8DE] dark:border-[#273145] bg-white dark:bg-[#19202E] text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-inner"
             />
             <button
               type="submit"
               disabled={creating}
-              className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-xs transition-colors whitespace-nowrap disabled:opacity-50"
+              className="btn-tactile px-5 py-2.5 rounded-2xl bg-indigo-600 text-white text-xs font-bold shadow-sm whitespace-nowrap disabled:opacity-50"
             >
               {creating ? 'Создание...' : 'Создать'}
             </button>
             <button
               type="button"
               onClick={() => setShowCreateForm(false)}
-              className="px-3 py-2 rounded-xl text-xs text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
+              className="px-4 py-2.5 rounded-2xl text-xs font-semibold text-stone-500 hover:text-stone-800 dark:hover:text-stone-200"
             >
               Отмена
             </button>
@@ -273,29 +292,29 @@ export default function TeacherDashboard() {
       {/* Classes List */}
       <div className="space-y-6">
         {classes.length === 0 ? (
-          <div className="p-12 text-center rounded-3xl border border-dashed border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-            <Users className="w-8 h-8 text-zinc-300 mx-auto mb-2" />
-            <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+          <div className="p-12 text-center rounded-3xl border border-dashed border-[#EEE8DE] dark:border-[#273145] bg-white dark:bg-[#19202E]">
+            <div className="text-4xl mb-3">🏫</div>
+            <h3 className="text-sm font-bold text-stone-700 dark:text-stone-300">
               У вас еще нет созданных классов
             </h3>
-            <p className="text-xs text-zinc-400 mt-1">
-              Нажмите «Новый класс» выше и скопируйте инвайт-код для учеников
+            <p className="text-xs text-stone-400 mt-1 max-w-sm mx-auto">
+              Нажмите «Новый класс» выше и передайте инвайт-код ученикам для подключения к группе
             </p>
           </div>
         ) : (
           classes.map((cls) => (
             <div
               key={cls.id}
-              className="rounded-3xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs overflow-hidden"
+              className="rounded-3xl border border-[#EEE8DE] dark:border-[#273145] bg-white dark:bg-[#19202E] shadow-sm overflow-hidden"
             >
               {/* Class Header */}
-              <div className="p-4 sm:p-5 border-b border-zinc-100 dark:border-zinc-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-zinc-50/30 dark:bg-zinc-900/40">
+              <div className="p-5 border-b border-[#EEE8DE] dark:border-[#273145] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FAF8F5]/60 dark:bg-[#141A26]/40">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-50">
+                    <h2 className="text-base font-extrabold text-stone-900 dark:text-stone-50">
                       {cls.name}
                     </h2>
-                    <span className="text-[11px] font-semibold text-zinc-400">
+                    <span className="text-[11px] font-semibold text-stone-400">
                       • {cls.students.length} учеников
                     </span>
                   </div>
@@ -303,15 +322,17 @@ export default function TeacherDashboard() {
 
                 {/* Invite Code Badge */}
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-zinc-400">Код для учеников:</span>
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800">
+                  <span className="text-[11px] text-stone-500 dark:text-stone-400 font-medium">
+                    Код для учеников:
+                  </span>
+                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-800/50 shadow-inner">
                     <span className="font-mono font-extrabold text-indigo-700 dark:text-indigo-300 text-xs tracking-wider">
                       {cls.inviteCode}
                     </span>
                     <button
                       onClick={() => copyInviteCode(cls.inviteCode)}
                       title="Скопировать инвайт-код"
-                      className="p-0.5 text-zinc-400 hover:text-indigo-600 transition-colors"
+                      className="p-0.5 text-stone-400 hover:text-indigo-600 transition-colors"
                     >
                       {copiedCode === cls.inviteCode ? (
                         <Check className="w-3.5 h-3.5 text-emerald-600" />
@@ -325,10 +346,12 @@ export default function TeacherDashboard() {
 
               {/* Optional Metric 1: AI Lesson Advice */}
               {prefs.showAiAdvice && cls.aiLessonAdvice && (
-                <div className="mx-4 sm:mx-5 mt-4 p-3 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/40 flex items-start gap-2.5 text-xs text-indigo-950 dark:text-indigo-200">
-                  <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
+                <div className="mx-5 mt-4 p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-900/40 flex items-start gap-3 text-xs text-amber-950 dark:text-amber-200">
+                  <span className="text-base shrink-0 mt-0.5">💡</span>
                   <div className="leading-relaxed">
-                    <span className="font-bold">ИИ-совет к уроку: </span>
+                    <span className="font-bold text-amber-900 dark:text-amber-300">
+                      ИИ-совет к уроку:{' '}
+                    </span>
                     {cls.aiLessonAdvice}
                   </div>
                 </div>
@@ -336,31 +359,31 @@ export default function TeacherDashboard() {
 
               {/* Optional Metric 2: Class Blindspots & Focus Topic Grid */}
               {(prefs.showBlindspots || prefs.showFocusTopic) && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 px-4 sm:px-5 mt-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 px-5 mt-4">
                   {/* Blindspots block */}
                   {prefs.showBlindspots && (
-                    <div className="p-3.5 rounded-2xl border border-zinc-200/60 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/20">
-                      <div className="flex items-center justify-between text-xs font-bold text-zinc-800 dark:text-zinc-200 mb-2">
+                    <div className="p-4 rounded-2xl border border-[#EEE8DE] dark:border-[#273145] bg-[#FBF9F5] dark:bg-[#141A26]">
+                      <div className="flex items-center justify-between text-xs font-bold text-stone-800 dark:text-stone-200 mb-2.5">
                         <span className="flex items-center gap-1.5">
                           <AlertTriangle className="w-3.5 h-3.5 text-rose-500" />
                           Слепые зоны класса (Топ ошибок)
                         </span>
                       </div>
                       {cls.blindspots.length === 0 ? (
-                        <p className="text-[11px] text-zinc-400">
-                          Ошибок пока нет, класс решает стабильно.
+                        <p className="text-[11px] text-stone-400">
+                          Ошибок пока нет, класс решает стабильно!
                         </p>
                       ) : (
                         <div className="space-y-1.5">
                           {cls.blindspots.map((bs, bsIdx) => (
                             <div
                               key={bsIdx}
-                              className="flex items-center justify-between text-xs p-1.5 rounded-lg bg-white dark:bg-zinc-800/80 border border-zinc-200/50 dark:border-zinc-700/50"
+                              className="flex items-center justify-between text-xs p-2 rounded-xl bg-white dark:bg-[#19202E] border border-[#EEE8DE] dark:border-[#273145]"
                             >
-                              <span className="text-[11px] font-medium text-zinc-800 dark:text-zinc-200 truncate max-w-[200px]">
+                              <span className="text-[11px] font-semibold text-stone-800 dark:text-stone-200 truncate max-w-[200px]">
                                 [{bs.topicLevel}] {bs.topicTitle}
                               </span>
-                              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400 shrink-0">
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400 shrink-0">
                                 {bs.percentAffected}% учеников ({bs.errorCount} ош.)
                               </span>
                             </div>
@@ -372,14 +395,14 @@ export default function TeacherDashboard() {
 
                   {/* Focus topic block */}
                   {prefs.showFocusTopic && (
-                    <div className="p-3.5 rounded-2xl border border-zinc-200/60 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/20">
-                      <div className="flex items-center justify-between text-xs font-bold text-zinc-800 dark:text-zinc-200 mb-2">
+                    <div className="p-4 rounded-2xl border border-[#EEE8DE] dark:border-[#273145] bg-[#FBF9F5] dark:bg-[#141A26]">
+                      <div className="flex items-center justify-between text-xs font-bold text-stone-800 dark:text-stone-200 mb-2.5">
                         <span className="flex items-center gap-1.5">
                           <Target className="w-3.5 h-3.5 text-indigo-500" />
                           Фокусная тема недели (ДЗ)
                         </span>
                         {cls.focusTopic && (
-                          <span className="text-[10px] text-zinc-400">
+                          <span className="text-[10px] text-stone-400 font-mono">
                             Сдали: {cls.focusCompletedCount} из {cls.students.length}
                           </span>
                         )}
@@ -388,7 +411,7 @@ export default function TeacherDashboard() {
                       <select
                         value={cls.focusTopicId || ''}
                         onChange={(e) => handleSetFocusTopic(cls.id, e.target.value)}
-                        className="w-full text-xs px-2.5 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 focus:outline-none"
+                        className="w-full text-xs px-3 py-2 rounded-xl border border-[#EEE8DE] dark:border-[#273145] bg-white dark:bg-[#19202E] text-stone-800 dark:text-stone-200 focus:outline-none shadow-xs"
                       >
                         <option value="">-- Выберите тему недели для закрепления --</option>
                         {allTopics.map((t) => (
@@ -399,8 +422,8 @@ export default function TeacherDashboard() {
                       </select>
 
                       {cls.focusTopic && (
-                        <div className="mt-2 text-[11px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                          <Check className="w-3 h-3" />
+                        <div className="mt-2.5 text-[11px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 font-medium">
+                          <Check className="w-3.5 h-3.5" />
                           <span>
                             Тема недели «{cls.focusTopic.title}» закреплена у всех учеников вверху.
                           </span>
@@ -412,48 +435,59 @@ export default function TeacherDashboard() {
               )}
 
               {/* Students Table */}
-              <div className="p-4 sm:p-5">
+              <div className="p-5">
                 {cls.students.length === 0 ? (
-                  <div className="p-6 text-center text-xs text-zinc-400">
-                    В этом классе пока нет учеников. Передайте им код приглашения{' '}
-                    <span className="font-mono font-bold text-indigo-600">{cls.inviteCode}</span>
+                  <div className="p-6 text-center text-xs text-stone-400">
+                    В этом классе пока нет учеников. Передайте им инвайт-код{' '}
+                    <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">
+                      {cls.inviteCode}
+                    </span>
                   </div>
                 ) : (
-                  <div className="divide-y divide-zinc-100 dark:divide-zinc-800/60">
+                  <div className="divide-y divide-[#EEE8DE] dark:divide-[#273145]">
                     {cls.students.map((student) => {
                       return (
                         <div
                           key={student.id}
-                          className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs hover:bg-zinc-50/60 dark:hover:bg-zinc-800/20 px-2 rounded-xl transition-colors"
+                          className="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs hover:bg-[#FBF9F5] dark:hover:bg-[#141A26]/50 px-3 rounded-2xl transition-colors"
                         >
                           {/* Student Info */}
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 font-bold flex items-center justify-center text-xs shrink-0">
+                            <div className="w-9 h-9 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 font-bold flex items-center justify-center text-xs shrink-0 border border-indigo-100 dark:border-indigo-800/40">
                               {student.fullName.charAt(0)}
                             </div>
                             <div>
                               <div className="flex items-center gap-2">
-                                <span className="font-semibold text-zinc-900 dark:text-zinc-100 text-xs">
+                                <span className="font-bold text-stone-900 dark:text-stone-100 text-xs">
                                   {student.fullName}
                                 </span>
-                                <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200/60 dark:border-zinc-700">
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-[#EEE8DE] dark:border-[#273145]">
                                   {student.currentLevel}
                                 </span>
                                 {prefs.showRiskStatus && (
                                   <>
                                     {student.riskStatus === 'high' && (
-                                      <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0" title="Высокий риск зависания" />
+                                      <span
+                                        className="w-2 h-2 rounded-full bg-rose-500 shrink-0"
+                                        title="Высокий риск зависания"
+                                      />
                                     )}
                                     {student.riskStatus === 'medium' && (
-                                      <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" title="Требует внимания" />
+                                      <span
+                                        className="w-2 h-2 rounded-full bg-amber-500 shrink-0"
+                                        title="Требует внимания"
+                                      />
                                     )}
                                     {student.riskStatus === 'low' && (
-                                      <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" title="В норме" />
+                                      <span
+                                        className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"
+                                        title="В норме"
+                                      />
                                     )}
                                   </>
                                 )}
                               </div>
-                              <span className="text-[11px] text-zinc-400">{student.email}</span>
+                              <span className="text-[11px] text-stone-400">{student.email}</span>
                             </div>
                           </div>
 
@@ -461,8 +495,8 @@ export default function TeacherDashboard() {
                           <div className="flex flex-wrap items-center gap-4 text-xs">
                             {prefs.showAccuracy && (
                               <div className="text-right">
-                                <span className="text-[10px] text-zinc-400 block">Точность</span>
-                                <span className="font-bold text-zinc-800 dark:text-zinc-200">
+                                <span className="text-[10px] text-stone-400 block font-medium">Точность</span>
+                                <span className="font-bold text-stone-800 dark:text-stone-200">
                                   {student.accuracy}%
                                 </span>
                               </div>
@@ -470,7 +504,7 @@ export default function TeacherDashboard() {
 
                             {prefs.showMastered && (
                               <div className="text-right">
-                                <span className="text-[10px] text-zinc-400 block">Освоено тем</span>
+                                <span className="text-[10px] text-stone-400 block font-medium">Освоено тем</span>
                                 <span className="font-bold text-emerald-600 dark:text-emerald-400">
                                   {student.masteredCount} / {allTopics.length || 12}
                                 </span>
@@ -484,7 +518,7 @@ export default function TeacherDashboard() {
                                   {student.bottlenecks.map((b, bIdx) => (
                                     <span
                                       key={bIdx}
-                                      className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800"
+                                      className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800"
                                     >
                                       [{b.level}] {b.title}
                                     </span>
@@ -500,10 +534,10 @@ export default function TeacherDashboard() {
                             {/* Dossier button */}
                             <button
                               onClick={() => setSelectedStudent(student)}
-                              className="px-2.5 py-1 rounded-lg bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-semibold text-xs transition-colors flex items-center gap-1"
+                              className="btn-tactile px-3 py-1.5 rounded-xl border border-[#EEE8DE] dark:border-[#273145] bg-white dark:bg-[#141A26] hover:bg-[#FBF9F5] text-stone-700 dark:text-stone-200 font-bold text-xs transition-colors flex items-center gap-1 shadow-xs"
                             >
                               <span>Досье</span>
-                              <ChevronRight className="w-3 h-3 text-zinc-400" />
+                              <ChevronRight className="w-3.5 h-3.5 text-stone-400" />
                             </button>
                           </div>
                         </div>

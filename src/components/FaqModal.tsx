@@ -159,3 +159,4 @@ export default function FaqModal({ isOpen, onClose }: { isOpen: boolean; onClose
     </div>
   );
 }
+

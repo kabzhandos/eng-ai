@@ -116,14 +116,14 @@ export default function PracticePage() {
 
   if (loading) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center py-20">
-        <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 flex items-center justify-center animate-bounce mb-4">
-          <Sparkles className="w-6 h-6" />
+      <div className="flex-1 flex flex-col items-center justify-center py-20 text-center">
+        <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 flex items-center justify-center animate-bounce mb-3 text-2xl">
+          🎲
         </div>
-        <p className="text-sm font-semibold text-zinc-600 dark:text-zinc-400">
-          ИИ генерирует персональное задание...
+        <p className="text-sm font-bold text-stone-800 dark:text-stone-200">
+          ИИ создает персональное задание...
         </p>
-        <p className="text-xs text-zinc-400 mt-1">Лексика строго адаптирована под ваш уровень</p>
+        <p className="text-xs text-stone-400 mt-1">Лексика строго подобрана под твой уровень</p>
       </div>
     );
   }
@@ -131,7 +131,7 @@ export default function PracticePage() {
   if (!question || !topic) {
     return (
       <div className="text-center py-12">
-        <p className="text-sm text-zinc-500">Не удалось загрузить задание.</p>
+        <p className="text-sm text-stone-500">Не удалось загрузить задание.</p>
         <Link href="/" className="inline-block mt-4 text-xs font-semibold text-indigo-600">
           Вернуться к темам
         </Link>
@@ -144,22 +144,22 @@ export default function PracticePage() {
   const activeAnswer = selectedOption || manualText;
 
   return (
-    <div className="flex-1 flex flex-col max-w-2xl mx-auto w-full py-4 sm:py-8">
+    <div className="flex-1 flex flex-col max-w-2xl mx-auto w-full py-2 sm:py-6">
       {/* Top Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-5">
         <Link
           href="/"
-          className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors"
+          className="flex items-center gap-1.5 text-xs font-semibold text-stone-500 hover:text-stone-800 dark:hover:text-stone-200 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>К списку тем</span>
+          <span>К темам</span>
         </Link>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+          <span className="text-xs font-bold px-2.5 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800">
             {topic.level}
           </span>
-          <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 truncate max-w-[200px]">
+          <span className="text-xs font-bold text-stone-700 dark:text-stone-300 truncate max-w-[220px]">
             {topic.title}
           </span>
         </div>
@@ -167,50 +167,50 @@ export default function PracticePage() {
 
       {/* Bottleneck Warning Banner */}
       {result?.isBottleneck && (
-        <div className="mb-4 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 flex items-start gap-2.5 text-xs text-amber-800 dark:text-amber-300">
+        <div className="mb-4 p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 flex items-start gap-2.5 text-xs text-amber-900 dark:text-amber-200">
           <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
           <div>
-            <span className="font-bold">Зона особого внимания:</span> на эту тему затрачено уже 5+ попыток. Внимательно изучите подсказки ниже перед продолжением.
+            <span className="font-bold">Зона особого внимания:</span> на эту тему затрачено уже 5+ попыток. Внимательно изучи подсказку перед продолжением.
           </div>
         </div>
       )}
 
       {/* Mastered Celebration Banner */}
       {result?.isMastered && (
-        <div className="mb-4 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex items-center gap-2.5 text-xs text-emerald-800 dark:text-emerald-300">
+        <div className="mb-4 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 flex items-center gap-2.5 text-xs text-emerald-900 dark:text-emerald-200">
           <Trophy className="w-4 h-4 text-emerald-600 shrink-0" />
           <div>
-            <span className="font-bold">Тема усвоена!</span> Вы успешно решили серию заданий подряд.
+            <span className="font-bold">🎉 Тема усвоена!</span> Ты успешно решил серию заданий подряд.
           </div>
         </div>
       )}
 
-      {/* Main Exercise Card */}
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-sm p-6 sm:p-8 flex-1 flex flex-col justify-between">
+      {/* Main Exercise Card (Paper EdTech style) */}
+      <div className="bg-white dark:bg-[#19202E] border border-[#EEE8DE] dark:border-[#273145] rounded-3xl shadow-[0_4px_25px_rgba(0,0,0,0.03)] p-6 sm:p-8 flex-1 flex flex-col justify-between">
         <div>
-          <div className="flex items-center justify-between text-xs text-zinc-400 mb-4">
-            <span className="flex items-center gap-1 font-medium">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
-              Генерация ИИ в реальном времени
+          <div className="flex items-center justify-between text-xs text-stone-400 mb-4 pb-3 border-b border-stone-100 dark:border-stone-800/60">
+            <span className="flex items-center gap-1.5 font-semibold text-stone-500 dark:text-stone-400">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>Генерация на лету</span>
             </span>
 
             <div className="flex items-center gap-3">
               {result && (
-                <span className="flex items-center gap-1 font-semibold text-amber-500">
-                  <Flame className="w-3.5 h-3.5" />
+                <span className="flex items-center gap-1 font-bold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-lg border border-amber-200/60">
+                  <Flame className="w-3.5 h-3.5 text-amber-500" />
                   Серия: {result.consecutiveCorrect}
                 </span>
               )}
 
               {/* Mode Toggle: Multiple Choice vs Fill in Blank */}
               {!result && (
-                <div className="flex items-center p-0.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg text-[11px]">
+                <div className="flex items-center p-0.5 bg-stone-100 dark:bg-stone-800 rounded-xl text-[11px]">
                   <button
                     onClick={() => setInputMode('options')}
-                    className={`px-2 py-1 rounded-md font-medium transition-all flex items-center gap-1 ${
+                    className={`px-2.5 py-1 rounded-lg font-semibold transition-all flex items-center gap-1 ${
                       inputMode === 'options'
-                        ? 'bg-white dark:bg-zinc-700 text-indigo-600 dark:text-indigo-300 shadow-xs'
-                        : 'text-zinc-500'
+                        ? 'bg-white dark:bg-stone-700 text-indigo-600 dark:text-indigo-300 shadow-2xs'
+                        : 'text-stone-500'
                     }`}
                   >
                     <MousePointerClick className="w-3 h-3" />
@@ -218,10 +218,10 @@ export default function PracticePage() {
                   </button>
                   <button
                     onClick={() => setInputMode('manual')}
-                    className={`px-2 py-1 rounded-md font-medium transition-all flex items-center gap-1 ${
+                    className={`px-2.5 py-1 rounded-lg font-semibold transition-all flex items-center gap-1 ${
                       inputMode === 'manual'
-                        ? 'bg-white dark:bg-zinc-700 text-indigo-600 dark:text-indigo-300 shadow-xs'
-                        : 'text-zinc-500'
+                        ? 'bg-white dark:bg-stone-700 text-indigo-600 dark:text-indigo-300 shadow-2xs'
+                        : 'text-stone-500'
                     }`}
                   >
                     <Keyboard className="w-3 h-3" />
@@ -233,17 +233,17 @@ export default function PracticePage() {
           </div>
 
           {/* Question Text */}
-          <div className="text-lg sm:text-2xl font-medium text-zinc-900 dark:text-zinc-50 leading-relaxed my-6">
+          <div className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-stone-50 leading-relaxed my-6 sm:my-8">
             {parts[0]}
             <span
-              className={`inline-block mx-1.5 px-3 py-1 rounded-xl font-bold border-2 transition-all ${
+              className={`inline-block mx-1.5 px-3 py-1 rounded-xl font-extrabold border-2 transition-all ${
                 result
                   ? result.isCorrect
-                    ? 'bg-emerald-100 dark:bg-emerald-950/60 border-emerald-500 text-emerald-700 dark:text-emerald-300'
-                    : 'bg-red-100 dark:bg-red-950/60 border-red-500 text-red-700 dark:text-red-300'
+                    ? 'bg-emerald-100 dark:bg-emerald-950/60 border-emerald-500 text-emerald-800 dark:text-emerald-200'
+                    : 'bg-rose-100 dark:bg-rose-950/60 border-rose-400 text-rose-800 dark:text-rose-200'
                   : activeAnswer
-                  ? 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-500 text-indigo-700 dark:text-indigo-300'
-                  : 'bg-zinc-100 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700 text-zinc-400 min-w-[70px] text-center'
+                  ? 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-500 text-indigo-800 dark:text-indigo-200'
+                  : 'bg-stone-100 dark:bg-stone-800 border-stone-300 dark:border-stone-700 text-stone-400 min-w-[75px] text-center'
               }`}
             >
               {activeAnswer || '.....'}
@@ -254,8 +254,8 @@ export default function PracticePage() {
           {/* Input Mode 1: Manual typing input */}
           {inputMode === 'manual' && !result && (
             <div className="mt-6">
-              <label className="block text-xs font-semibold text-zinc-500 mb-2">
-                Введите пропущенное слово или фразу на английском:
+              <label className="block text-xs font-semibold text-stone-500 mb-2">
+                Введи пропущенное слово или фразу:
               </label>
               <input
                 type="text"
@@ -263,8 +263,8 @@ export default function PracticePage() {
                 value={manualText}
                 onChange={(e) => handleManualChange(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-                placeholder="Введите ваш ответ..."
-                className="w-full px-4 py-3 rounded-2xl border-2 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-sm sm:text-base font-semibold focus:outline-none focus:border-indigo-600 focus:bg-white dark:focus:bg-zinc-900 transition-all"
+                placeholder="Напечатай ответ..."
+                className="w-full px-4 py-3 rounded-2xl border-2 border-stone-200 dark:border-stone-700 bg-stone-50/50 dark:bg-stone-800/50 text-base font-bold text-stone-900 dark:text-stone-100 focus:outline-none focus:border-indigo-600 focus:bg-white dark:focus:bg-stone-900 transition-all"
               />
             </div>
           )}
@@ -275,24 +275,24 @@ export default function PracticePage() {
               {question.options.map((opt, idx) => {
                 const isSelected = activeAnswer?.toLowerCase() === opt.toLowerCase();
                 let btnStyle =
-                  'border-zinc-200 dark:border-zinc-800 hover:border-indigo-400 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200';
+                  'border-stone-200/90 dark:border-stone-700/80 bg-white dark:bg-[#151B27] text-stone-800 dark:text-stone-200 hover:border-indigo-400 hover:bg-indigo-50/20';
 
                 if (result) {
                   if (isSelected && result.isCorrect) {
                     btnStyle =
-                      'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 font-bold ring-2 ring-emerald-500/20';
+                      'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-200 font-bold ring-2 ring-emerald-500/20';
                   } else if (opt === result.correctAnswer) {
                     btnStyle =
-                      'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 font-bold';
+                      'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-200 font-bold';
                   } else if (isSelected && !result.isCorrect) {
                     btnStyle =
-                      'border-red-500 bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-300 font-bold';
+                      'border-rose-400 bg-rose-50 dark:bg-rose-950/50 text-rose-800 dark:text-rose-200 font-bold';
                   } else {
-                    btnStyle = 'opacity-50 border-zinc-200 dark:border-zinc-800 text-zinc-400';
+                    btnStyle = 'opacity-50 border-stone-200 dark:border-stone-800 text-stone-400';
                   }
                 } else if (isSelected) {
                   btnStyle =
-                    'border-indigo-600 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 font-semibold ring-2 ring-indigo-500/20';
+                    'border-indigo-600 bg-indigo-50/60 dark:bg-indigo-950/50 text-indigo-800 dark:text-indigo-200 font-bold ring-2 ring-indigo-500/20';
                 }
 
                 return (
@@ -300,14 +300,14 @@ export default function PracticePage() {
                     key={idx}
                     disabled={!!result || submitting}
                     onClick={() => handleSelectOption(opt)}
-                    className={`p-4 rounded-2xl border-2 text-left text-sm sm:text-base transition-all flex items-center justify-between ${btnStyle}`}
+                    className={`p-4 sm:p-5 rounded-2xl border-2 text-left text-sm sm:text-base font-semibold transition-all flex items-center justify-between ${btnStyle}`}
                   >
                     <span>{opt}</span>
                     {result && opt === result.correctAnswer && (
                       <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
                     )}
                     {result && isSelected && !result.isCorrect && (
-                      <XCircle className="w-5 h-5 text-red-500 shrink-0" />
+                      <XCircle className="w-5 h-5 text-rose-500 shrink-0" />
                     )}
                   </button>
                 );
@@ -319,45 +319,45 @@ export default function PracticePage() {
         {/* Smart Retry Explanation Box */}
         {result && (
           <div
-            className={`mt-6 p-4 sm:p-5 rounded-2xl border ${
+            className={`mt-6 p-4 sm:p-5 rounded-2xl border transition-all ${
               result.isCorrect
-                ? 'bg-emerald-50/70 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800 text-emerald-950 dark:text-emerald-200'
-                : 'bg-rose-50/70 dark:bg-rose-950/30 border-rose-200 dark:border-rose-800 text-rose-950 dark:text-rose-200'
+                ? 'bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/80 text-emerald-950 dark:text-emerald-200'
+                : 'bg-amber-50/80 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/80 text-amber-950 dark:text-amber-200'
             }`}
           >
             <div className="flex items-center gap-2 mb-2 font-bold text-xs uppercase tracking-wider">
               {result.isCorrect ? (
                 <>
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  Отлично! Ответ верный
+                  <span>Отлично! Ответ верный</span>
                 </>
               ) : (
                 <>
-                  <Lightbulb className="w-4 h-4 text-amber-600 animate-pulse" />
-                  Smart Retry: Разбор ошибки от ИИ
+                  <Lightbulb className="w-4 h-4 text-amber-600" />
+                  <span>Smart Retry: Разбор от ИИ</span>
                 </>
               )}
             </div>
-            <div className="text-xs sm:text-sm whitespace-pre-line leading-relaxed">
+            <div className="text-xs sm:text-sm whitespace-pre-line leading-relaxed font-medium">
               {result.explanation}
             </div>
           </div>
         )}
 
         {/* Bottom Actions */}
-        <div className="mt-8 pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-end">
+        <div className="mt-8 pt-4 border-t border-stone-100 dark:border-stone-800/70 flex items-center justify-end">
           {!result ? (
             <button
               onClick={handleSubmit}
               disabled={!activeAnswer?.trim() || submitting}
-              className="w-full sm:w-auto px-8 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-md transition-all disabled:opacity-40"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md shadow-indigo-600/20 transition-all disabled:opacity-40 hover:scale-[1.02] active:scale-[0.98]"
             >
-              {submitting ? 'Проверка...' : 'Проверить ответ'}
+              {submitting ? 'Проверяем...' : 'Проверить ответ'}
             </button>
           ) : (
             <button
               onClick={fetchQuestion}
-              className="w-full sm:w-auto px-8 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md shadow-indigo-600/20 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
             >
               <span>{result.isCorrect ? 'Следующее задание' : 'Отработать ошибку (Новый пример)'}</span>
               <ArrowRight className="w-4 h-4" />

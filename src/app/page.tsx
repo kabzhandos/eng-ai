@@ -3,7 +3,6 @@ import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import {
   Sparkles,
-  BookOpen,
   ArrowRight,
   CheckCircle2,
   AlertTriangle,
@@ -13,6 +12,10 @@ import {
   ShieldCheck,
   GraduationCap,
   Compass,
+  Star,
+  BookOpen,
+  Heart,
+  Smile,
 } from 'lucide-react';
 import { CefrLevel } from '@/types';
 
@@ -22,77 +25,77 @@ export default async function HomePage() {
   if (!user) {
     // Landing view for unauthenticated visitors
     return (
-      <div className="flex-1 flex flex-col items-center justify-center py-10 text-center">
-        {/* Hero badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 text-xs font-semibold mb-6 shadow-sm">
-          <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-          <span>Генеративный ИИ вместо статических баз вопросов</span>
+      <div className="flex-1 flex flex-col items-center justify-center py-8 sm:py-14 text-center">
+        {/* Friendly Hero Badge */}
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 text-amber-900 dark:text-amber-200 text-xs font-semibold mb-6 shadow-2xs">
+          <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+          <span>Умный тренажер без зубрежки и скучных тестов</span>
         </div>
 
         {/* Hero Title */}
-        <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50 max-w-2xl leading-tight">
-          Изучайте грамматику английского{' '}
-          <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
-            без зазубривания ответов
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-stone-900 dark:text-stone-50 max-w-2xl leading-[1.15]">
+          Английская грамматика, которую ты наконец{' '}
+          <span className="text-indigo-600 dark:text-indigo-400 underline decoration-amber-300 dark:decoration-amber-500 decoration-wavy decoration-2">
+            полюбишь
           </span>
         </h1>
 
-        <p className="mt-4 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-xl leading-relaxed">
-          Каждое задание генерируется нейросетью в реальном времени под ваш уровень (A1–B2). При ошибке ИИ объясняет суть правила и тут же дает совершенно новый пример.
+        <p className="mt-5 text-sm sm:text-base text-stone-600 dark:text-stone-400 max-w-xl leading-relaxed">
+          ИИ создает живые примеры в реальном времени под твой уровень. Ошибся? Никаких двоек: система по-человечески объяснит правило и сразу предложит свежий пример.
         </p>
 
-        {/* CTA Buttons */}
+        {/* Tactile CTA Buttons */}
         <div className="mt-8 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
           <Link
             href="/register"
-            className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-lg shadow-indigo-600/25 transition-all flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md shadow-indigo-500/20 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
           >
-            Начать тренировки
+            <span>Начать бесплатно</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
-            href="/login"
-            className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 font-semibold text-sm transition-all"
+            href="/placement"
+            className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-white dark:bg-stone-800 border border-stone-200/80 dark:border-stone-700 text-stone-800 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-700 font-semibold text-sm transition-all shadow-2xs"
           >
-            Войти в аккаунт
+            Пройти тест уровня (20 вопросов)
           </Link>
         </div>
 
-        {/* Feature Cards Grid */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 text-left max-w-4xl w-full">
-          <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm">
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-4">
-              <Zap className="w-5 h-5" />
+        {/* Feature Cards Grid (Paper style) */}
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-5 text-left max-w-4xl w-full">
+          <div className="p-6 rounded-3xl bg-white dark:bg-[#19202E] border border-[#EEE8DE] dark:border-[#273145] shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-indigo-300 dark:hover:border-indigo-800 transition-all">
+            <div className="w-11 h-11 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4 text-xl">
+              🎲
             </div>
-            <h3 className="font-bold text-sm text-zinc-900 dark:text-zinc-100 mb-1">
-              Zero Static Questions
+            <h3 className="font-bold text-sm sm:text-base text-stone-900 dark:text-stone-100 mb-1.5">
+              Новые примеры каждый раз
             </h3>
-            <p className="text-xs text-zinc-500 leading-relaxed">
-              Невозможно списать или запомнить тест. Каждое предложение генерируется с нуля под ваш уровень.
+            <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">
+              Больше никаких статических сборников. Предложения генерируются на лету — тренируй интуицию, а не память на ответы.
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4">
-              <Target className="w-5 h-5" />
+          <div className="p-6 rounded-3xl bg-white dark:bg-[#19202E] border border-[#EEE8DE] dark:border-[#273145] shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-emerald-300 dark:hover:border-emerald-800 transition-all">
+            <div className="w-11 h-11 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4 text-xl">
+              💡
             </div>
-            <h3 className="font-bold text-sm text-zinc-900 dark:text-zinc-100 mb-1">
+            <h3 className="font-bold text-sm sm:text-base text-stone-900 dark:text-stone-100 mb-1.5">
               Smart Retry (Разбор ошибок)
             </h3>
-            <p className="text-xs text-zinc-500 leading-relaxed">
-              Ошиблись? ИИ объяснит на понятном русском языке, почему ваш ответ неверен, и предложит новое задание.
+            <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">
+              Не просто красный крестик. ИИ бережно объяснит, почему ответ неверен, подскажет лайфхак-маркер и даст закрепить правило.
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4">
-              <ShieldCheck className="w-5 h-5" />
+          <div className="p-6 rounded-3xl bg-white dark:bg-[#19202E] border border-[#EEE8DE] dark:border-[#273145] shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-purple-300 dark:hover:border-purple-800 transition-all">
+            <div className="w-11 h-11 rounded-2xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-4 text-xl">
+              🌱
             </div>
-            <h3 className="font-bold text-sm text-zinc-900 dark:text-zinc-100 mb-1">
-              Контроль зависаний
+            <h3 className="font-bold text-sm sm:text-base text-stone-900 dark:text-stone-100 mb-1.5">
+              Словарь под твой уровень
             </h3>
-            <p className="text-xs text-zinc-500 leading-relaxed">
-              Если ученик буксует на правиле больше 5 раз, система сразу сигнализирует об этом учителю.
+            <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">
+              Если учишь правило A2, ты не встретишь незнакомых заумных слов из C1. Ты учишь чистую грамматику без стресса.
             </p>
           </div>
         </div>
@@ -104,18 +107,18 @@ export default async function HomePage() {
   if (user.role === 'TEACHER') {
     return (
       <div className="py-12 text-center max-w-lg mx-auto">
-        <div className="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center mx-auto mb-4">
-          <GraduationCap className="w-6 h-6" />
+        <div className="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center mx-auto mb-4 text-2xl">
+          👩‍🏫
         </div>
-        <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+        <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100 mb-2">
           Здравствуйте, {user.fullName}!
         </h2>
-        <p className="text-xs text-zinc-500 mb-6">
-          Вы вошли в систему как преподаватель. Управляйте учебными группами и отслеживайте зоны зависания учеников.
+        <p className="text-xs text-stone-500 mb-6">
+          Вы вошли в систему как преподаватель. Управляйте учебными группами, слепыми зонами и фокусными темами.
         </p>
         <Link
           href="/teacher"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-md transition-colors"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-sm transition-all"
         >
           Перейти в панель учителя
           <ArrowRight className="w-4 h-4" />
@@ -168,37 +171,44 @@ export default async function HomePage() {
   ).length;
 
   return (
-    <div className="space-y-8">
-      {/* Student Level Banner */}
-      <div className="p-6 rounded-3xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-violet-700 text-white shadow-lg shadow-indigo-500/15 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6">
+      {/* Student Welcome Banner (Warm EdTech style) */}
+      <div className="p-6 sm:p-7 rounded-3xl bg-white dark:bg-[#19202E] border border-[#EEE8DE] dark:border-[#273145] shadow-[0_4px_25px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row sm:items-center justify-between gap-5">
         <div>
-          <span className="text-xs font-semibold text-indigo-200 uppercase tracking-wider">
-            Личный кабинет ученика
-          </span>
-          <h1 className="text-2xl font-bold mt-1">{user.fullName}</h1>
-          <p className="text-xs text-indigo-100 mt-1">
-            Текущий подтвержденный уровень:{' '}
-            <span className="font-bold underline decoration-indigo-300">
+          <div className="flex items-center gap-2 text-xs font-bold text-amber-600 dark:text-amber-400 mb-1">
+            <span>👋</span>
+            <span>Добро пожаловать в тренажер</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 dark:text-stone-50">
+            Привет, {user.fullName}!
+          </h1>
+          <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-1">
+            Твой подтвержденный уровень:{' '}
+            <span className="font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded-lg border border-indigo-200/60 dark:border-indigo-800">
               {user.currentLevel}
             </span>
+            <span className="mx-2 text-stone-300">•</span>
+            <span>Выбирай тему и решай в своем темпе</span>
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
           <Link
             href="/placement"
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 backdrop-blur-md text-xs font-semibold text-white border border-white/20 transition-all shadow-sm"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-xs font-semibold text-stone-700 dark:text-stone-200 transition-all"
           >
-            <Compass className="w-4 h-4 text-amber-300" />
-            <span>Тест уровня (Placement)</span>
+            <Compass className="w-4 h-4 text-amber-500" />
+            <span>Тест уровня (20 вопр.)</span>
           </Link>
 
-          <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/15">
-            <Trophy className="w-6 h-6 text-amber-300 shrink-0" />
+          <div className="flex items-center gap-3 bg-amber-50/60 dark:bg-amber-950/30 px-4 py-2.5 rounded-2xl border border-amber-200/70 dark:border-amber-800/60">
+            <Trophy className="w-5 h-5 text-amber-500 shrink-0" />
             <div className="text-left">
-              <span className="block text-[11px] text-indigo-100">Усвоено тем</span>
-              <span className="text-lg font-bold">
-                {masteredCount} / {topics.length}
+              <span className="block text-[10px] font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider">
+                Освоено
+              </span>
+              <span className="text-base font-extrabold text-stone-900 dark:text-stone-100">
+                {masteredCount} / {topics.length} тем
               </span>
             </div>
           </div>
@@ -207,23 +217,23 @@ export default async function HomePage() {
 
       {/* Teacher Focus Assignment Banner */}
       {teacherFocusTopic && (
-        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/40 dark:to-purple-950/40 border border-indigo-200/80 dark:border-indigo-900/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+        <div className="p-5 rounded-3xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200/80 dark:border-indigo-900/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-xs">
               <Target className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">
-                Задание от преподавателя ({enrolledMembership?.class?.name})
+              <span className="text-[11px] font-bold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider block">
+                🎯 Задание от преподавателя ({enrolledMembership?.class?.name})
               </span>
-              <h2 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
-                Фокус недели: [{teacherFocusTopic.level}] {teacherFocusTopic.title}
+              <h2 className="text-sm font-bold text-stone-900 dark:text-stone-50">
+                Тема недели: [{teacherFocusTopic.level}] {teacherFocusTopic.title}
               </h2>
             </div>
           </div>
           <Link
             href={`/practice/${teacherFocusTopic.id}`}
-            className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-xs transition-colors flex items-center justify-center gap-1.5 self-start sm:self-auto"
+            className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs transition-colors flex items-center justify-center gap-1.5 self-start sm:self-auto"
           >
             <span>Выполнить задание</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -232,25 +242,30 @@ export default async function HomePage() {
       )}
 
       {/* Topics Tree by CEFR Levels */}
-      <div className="space-y-8">
+      <div className="space-y-7 pt-2">
         {levelOrder.map((lvl) => {
           const levelTopics = topicsByLevel[lvl];
           if (!levelTopics || levelTopics.length === 0) return null;
 
-          const isCurrentOrPassedLevel =
-            levelOrder.indexOf(lvl) <= levelOrder.indexOf(user.currentLevel as CefrLevel);
+          const levelEmoji = lvl === 'A1' ? '🌱' : lvl === 'A2' ? '🌿' : lvl === 'B1' ? '🚀' : '⭐';
+          const levelDesc =
+            lvl === 'A1'
+              ? 'Начальный — базовые конструкции и привычки'
+              : lvl === 'A2'
+              ? 'Элементарный — прошедшее время и сравнения'
+              : lvl === 'B1'
+              ? 'Средний — времена Perfect и Conditionals 1-2'
+              : 'Выше среднего — пассивный залог и сложные модальные глаголы';
 
           return (
-            <div key={lvl} className="space-y-3">
+            <div key={lvl} className="space-y-3.5">
               <div className="flex items-center gap-2.5">
-                <span className="px-2.5 py-0.5 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-extrabold text-xs">
-                  Уровень {lvl}
+                <span className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 font-extrabold text-xs border border-stone-200/60 dark:border-stone-700">
+                  <span>{levelEmoji}</span>
+                  <span>Уровень {lvl}</span>
                 </span>
-                <span className="text-xs font-medium text-zinc-500">
-                  {lvl === 'A1' && 'Начальный — базовые конструкции и рутины'}
-                  {lvl === 'A2' && 'Элементарный — прошедшее время и сравнения'}
-                  {lvl === 'B1' && 'Средний — времена группы Perfect и Conditionals 1-2'}
-                  {lvl === 'B2' && 'Выше среднего — пассив, модальные глаголы догадки'}
+                <span className="text-xs text-stone-500 dark:text-stone-400 font-medium">
+                  {levelDesc}
                 </span>
               </div>
 
@@ -263,51 +278,51 @@ export default async function HomePage() {
                   return (
                     <div
                       key={topic.id}
-                      className={`p-4 rounded-2xl border transition-all flex flex-col justify-between bg-white dark:bg-zinc-900 ${
+                      className={`p-5 rounded-3xl border transition-all flex flex-col justify-between bg-white dark:bg-[#19202E] ${
                         isMastered
-                          ? 'border-emerald-300 dark:border-emerald-800 shadow-sm'
+                          ? 'border-emerald-300/80 dark:border-emerald-800/80 shadow-2xs'
                           : isBottleneck
-                          ? 'border-rose-300 dark:border-rose-800 shadow-sm'
-                          : 'border-zinc-200 dark:border-zinc-800 hover:border-indigo-400'
+                          ? 'border-amber-300 dark:border-amber-800/80 shadow-2xs'
+                          : 'border-[#EEE8DE] dark:border-[#273145] hover:border-indigo-300 dark:hover:border-indigo-700 shadow-[0_2px_12px_rgba(0,0,0,0.02)]'
                       }`}
                     >
                       <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
+                        <div className="flex items-center justify-between mb-2.5">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400">
                             Тема #{topic.orderIndex}
                           </span>
 
                           {isMastered && (
-                            <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                            <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-lg border border-emerald-200 dark:border-emerald-800">
                               <CheckCircle2 className="w-3.5 h-3.5" />
                               Освоено
                             </span>
                           )}
 
                           {isBottleneck && !isMastered && (
-                            <span className="flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 border border-rose-200">
+                            <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-lg bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/80">
                               <AlertTriangle className="w-3 h-3" />
-                              Зона зависания
+                              Зона внимания
                             </span>
                           )}
                         </div>
 
-                        <h3 className="font-bold text-sm text-zinc-900 dark:text-zinc-100 leading-snug mb-1">
+                        <h3 className="font-bold text-sm text-stone-900 dark:text-stone-100 leading-snug mb-1.5">
                           {topic.title}
                         </h3>
-                        <p className="text-xs text-zinc-500 line-clamp-2 leading-relaxed">
+                        <p className="text-xs text-stone-500 dark:text-stone-400 line-clamp-2 leading-relaxed">
                           {topic.description}
                         </p>
                       </div>
 
-                      <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
-                        <span className="text-[11px] text-zinc-400">
+                      <div className="mt-4 pt-3.5 border-t border-stone-100 dark:border-stone-800/70 flex items-center justify-between">
+                        <span className="text-[11px] text-stone-400">
                           {progress?.totalAttempts ? `Попыток: ${progress.totalAttempts}` : 'Еще не решали'}
                         </span>
 
                         <Link
                           href={`/practice/${topic.id}`}
-                          className="px-3 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-semibold text-xs transition-colors flex items-center gap-1"
+                          className="px-3.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-bold text-xs transition-colors flex items-center gap-1"
                         >
                           <span>{isMastered ? 'Повторить' : 'Решать'}</span>
                           <ArrowRight className="w-3 h-3" />
