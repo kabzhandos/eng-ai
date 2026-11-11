@@ -57,8 +57,8 @@ export default function RootLayout({
                 <span className="text-stone-300 dark:text-stone-600">•</span>
                 <span>Умное и дружелюбное изучение английской грамматики</span>
               </span>
-              <span className="text-[11px] text-stone-400">
-                Создано для уверенного понимания языка, а не для зубрежки
+              <span className="text-[11px] text-stone-500 dark:text-stone-400 font-medium">
+                Разработчик: Андамасова Ж.А.
               </span>
             </div>
           </footer>
