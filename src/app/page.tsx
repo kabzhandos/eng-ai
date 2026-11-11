@@ -18,6 +18,7 @@ import {
   Smile,
 } from 'lucide-react';
 import { CefrLevel } from '@/types';
+import StudentQuestionsSection from '@/components/StudentQuestionsSection';
 
 export default async function HomePage() {
   const user = await getCurrentUser();
@@ -127,8 +128,8 @@ export default async function HomePage() {
     );
   }
 
-  // Student Dashboard: Grammar Topic Tree & Enrolled Class Focus Topic
-  const [topics, enrolledMembership] = await Promise.all([
+  // Student Dashboard: Grammar Topic Tree, Enrolled Class Focus Topic & Question Flags
+  const [topics, enrolledMembership, questionFlags] = await Promise.all([
     prisma.grammarTopic.findMany({
       orderBy: { orderIndex: 'asc' },
       include: {
@@ -147,9 +148,30 @@ export default async function HomePage() {
         },
       },
     }),
+    prisma.teacherQuestionFlag.findMany({
+      where: { studentId: user.userId },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        topic: { select: { id: true, title: true, level: true } },
+      },
+    }),
   ]);
 
   const teacherFocusTopic = enrolledMembership?.class?.focusTopic;
+
+  const formattedFlags = questionFlags.map((qf) => ({
+    id: qf.id,
+    topicId: qf.topicId,
+    topicTitle: qf.topic.title,
+    topicLevel: qf.topic.level,
+    questionText: qf.questionText,
+    studentAnswer: qf.studentAnswer,
+    correctAnswer: qf.correctAnswer,
+    explanation: qf.explanation,
+    studentComment: qf.studentComment,
+    status: qf.status,
+    createdAt: qf.createdAt.toISOString(),
+  }));
 
   const levelOrder: CefrLevel[] = ['A1', 'A2', 'B1', 'B2'];
   const topicsByLevel: Record<CefrLevel, typeof topics> = {
@@ -240,6 +262,9 @@ export default async function HomePage() {
           </Link>
         </div>
       )}
+
+      {/* Student Question Flags (Пометки "Спросить учителя") */}
+      <StudentQuestionsSection initialFlags={formattedFlags} />
 
       {/* Topics Tree by CEFR Levels */}
       <div className="space-y-7 pt-2">

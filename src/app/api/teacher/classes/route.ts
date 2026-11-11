@@ -23,7 +23,7 @@ export async function GET() {
     select: { id: true, title: true, level: true, slug: true },
   });
 
-  // 2. Fetch teacher's classes with full student stats
+  // 2. Fetch teacher's classes with full student stats + question flags
   const classes = await prisma.class.findMany({
     where: { teacherId: session.userId },
     include: {
@@ -60,6 +60,12 @@ export async function GET() {
                   topic: { select: { title: true, level: true } },
                 },
               },
+              questionFlags: {
+                orderBy: { createdAt: 'desc' },
+                include: {
+                  topic: { select: { id: true, title: true, level: true } },
+                },
+              },
             },
           },
         },
@@ -68,9 +74,12 @@ export async function GET() {
     orderBy: { createdAt: 'desc' },
   });
 
-  // 3. Enrich classes with metrics (blindspots, student risk scores, focus topic completion)
+  // 3. Enrich classes with metrics (blindspots, student risk scores, focus topic completion, flags)
   const formattedClasses = classes.map((cls) => {
-    const errorMap: Record<string, { topicTitle: string; topicLevel: string; errorCount: number; studentCount: Set<string> }> = {};
+    const errorMap: Record<
+      string,
+      { topicTitle: string; topicLevel: string; errorCount: number; studentCount: Set<string> }
+    > = {};
 
     let totalStudents = cls.members.length;
     let focusCompletedCount = 0;
@@ -99,7 +108,7 @@ export async function GET() {
         }
       }
 
-      // Aggregate class errors
+      // Collect mistake signals for class blindspots calculation
       student.attempts
         .filter((a) => !a.isCorrect)
         .forEach((a) => {
@@ -111,40 +120,54 @@ export async function GET() {
               studentCount: new Set(),
             };
           }
-          errorMap[a.topicId].errorCount++;
+          errorMap[a.topicId].errorCount += 1;
           errorMap[a.topicId].studentCount.add(student.id);
         });
 
-      // Calculate risk status
+      // Simple risk heuristic: high if 2+ bottlenecks or accuracy < 50%
       let riskStatus: 'high' | 'medium' | 'low' = 'low';
       if (bottlenecks.length >= 2 || (totalAttempts >= 5 && accuracy < 50)) {
         riskStatus = 'high';
-      } else if (bottlenecks.length === 1 || (totalAttempts >= 5 && accuracy < 65)) {
+      } else if (bottlenecks.length === 1 || (totalAttempts >= 5 && accuracy < 70)) {
         riskStatus = 'medium';
       }
+
+      const formattedFlags = student.questionFlags.map((qf) => ({
+        id: qf.id,
+        topicId: qf.topicId,
+        topicTitle: qf.topic.title,
+        topicLevel: qf.topic.level,
+        questionText: qf.questionText,
+        studentAnswer: qf.studentAnswer,
+        correctAnswer: qf.correctAnswer,
+        explanation: qf.explanation,
+        studentComment: qf.studentComment,
+        status: qf.status,
+        createdAt: qf.createdAt.toISOString(),
+      }));
 
       return {
         id: student.id,
         fullName: student.fullName,
         email: student.email,
         currentLevel: student.currentLevel,
-        joinedAt,
+        joinedAt: joinedAt.toISOString(),
         totalAttempts,
         accuracy,
         masteredCount: mastered.length,
-        bottlenecks,
         riskStatus,
-        recentAttempts: student.attempts.slice(0, 10).map((att) => ({
-          id: att.id,
-          isCorrect: att.isCorrect,
-          studentAnswer: att.studentAnswer,
-          topicTitle: att.topic.title,
-          topicLevel: att.topic.level,
-          aiExplanation: att.aiExplanation,
-          createdAt: att.createdAt,
+        bottlenecks,
+        recentAttempts: student.attempts.map((a) => ({
+          id: a.id,
+          isCorrect: a.isCorrect,
+          studentAnswer: a.studentAnswer,
+          topicTitle: a.topic.title,
+          topicLevel: a.topic.level,
+          aiExplanation: a.aiExplanation,
+          createdAt: a.createdAt.toISOString(),
         })),
         topicProgress: student.topicProgress.map((tp) => ({
-          topicId: tp.topicId,
+          topicId: tp.topic.id,
           title: tp.topic.title,
           level: tp.topic.level,
           isMastered: tp.isMastered,
@@ -152,6 +175,8 @@ export async function GET() {
           totalAttempts: tp.totalAttempts,
           failedAttempts: tp.failedAttempts,
         })),
+        questionFlags: formattedFlags,
+        pendingFlagsCount: formattedFlags.filter((f) => f.status === 'PENDING').length,
       };
     });
 
@@ -162,7 +187,8 @@ export async function GET() {
         topicLevel: item.topicLevel,
         errorCount: item.errorCount,
         affectedStudents: item.studentCount.size,
-        percentAffected: totalStudents > 0 ? Math.round((item.studentCount.size / totalStudents) * 100) : 0,
+        percentAffected:
+          totalStudents > 0 ? Math.round((item.studentCount.size / totalStudents) * 100) : 0,
       }))
       .sort((a, b) => b.affectedStudents - a.affectedStudents || b.errorCount - a.errorCount)
       .slice(0, 3);
@@ -172,18 +198,27 @@ export async function GET() {
     if (blindspots.length > 0) {
       aiLessonAdvice = `Внимание: тема «${blindspots[0].topicTitle} (${blindspots[0].topicLevel})» вызывает сложности у ${blindspots[0].percentAffected}% учеников класса. Рекомендуется провести 10-минутную разминку с акцентом на сигнальные слова.`;
     } else {
-      aiLessonAdvice = 'Все темы в группе осваиваются стабильно. Можно переходить к усложненным конструкциям следующего уровня.';
+      aiLessonAdvice =
+        'Все темы в группе осваиваются стабильно. Можно переходить к усложненным конструкциям следующего уровня.';
     }
+
+    const totalPendingFlags = formattedStudents.reduce(
+      (acc, s) => acc + s.pendingFlagsCount,
+      0
+    );
 
     return {
       id: cls.id,
       name: cls.name,
       inviteCode: cls.inviteCode,
       createdAt: cls.createdAt,
+      isArchived: cls.isArchived,
+      archivedAt: cls.archivedAt ? cls.archivedAt.toISOString() : null,
       focusTopic: cls.focusTopic,
       focusTopicId: cls.focusTopicId,
       focusCompletedCount,
       totalStudents,
+      totalPendingFlags,
       blindspots,
       aiLessonAdvice,
       students: formattedStudents,
@@ -224,7 +259,7 @@ export async function POST(req: Request) {
   return NextResponse.json({ success: true, class: newClass });
 }
 
-// PATCH: Update class settings (e.g. set or change focusTopicId)
+// PATCH: Update class settings (focusTopicId, or isArchived)
 export async function PATCH(req: Request) {
   const session = await getCurrentUser();
   if (!session || session.role !== 'TEACHER') {
@@ -232,9 +267,18 @@ export async function PATCH(req: Request) {
   }
 
   try {
-    const { classId, focusTopicId } = await req.json();
+    const { classId, focusTopicId, isArchived } = await req.json();
     if (!classId) {
       return NextResponse.json({ error: 'classId обязателен' }, { status: 400 });
+    }
+
+    const updateData: any = {};
+    if (focusTopicId !== undefined) {
+      updateData.focusTopicId = focusTopicId || null;
+    }
+    if (isArchived !== undefined) {
+      updateData.isArchived = Boolean(isArchived);
+      updateData.archivedAt = isArchived ? new Date() : null;
     }
 
     const updated = await prisma.class.update({
@@ -242,14 +286,39 @@ export async function PATCH(req: Request) {
         id: classId,
         teacherId: session.userId,
       },
-      data: {
-        focusTopicId: focusTopicId || null,
-      },
+      data: updateData,
     });
 
     return NextResponse.json({ success: true, class: updated });
   } catch (err: any) {
-    console.error('Error updating class focus topic:', err);
+    console.error('Error updating class:', err);
     return NextResponse.json({ error: 'Ошибка обновления' }, { status: 500 });
   }
+}
+
+// DELETE: Permanently delete an archived class
+export async function DELETE(req: Request) {
+  const session = await getCurrentUser();
+  if (!session || session.role !== 'TEACHER') {
+    return NextResponse.json({ error: 'Доступ разрешен только учителям' }, { status: 403 });
+  }
+
+  const { searchParams } = new URL(req.url);
+  const classId = searchParams.get('classId');
+  if (!classId) {
+    return NextResponse.json({ error: 'classId обязателен' }, { status: 400 });
+  }
+
+  const existing = await prisma.class.findFirst({
+    where: { id: classId, teacherId: session.userId },
+  });
+  if (!existing) {
+    return NextResponse.json({ error: 'Класс не найден' }, { status: 404 });
+  }
+
+  await prisma.class.delete({
+    where: { id: classId },
+  });
+
+  return NextResponse.json({ success: true });
 }

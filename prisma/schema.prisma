@@ -28,6 +28,7 @@ model User {
   attempts            StudentAttempt[]
   topicProgress       StudentTopicProgress[]
   bufferedQuestions   QuestionBuffer[]
+  questionFlags       TeacherQuestionFlag[]
 }
 
 model Class {
@@ -38,6 +39,8 @@ model Class {
   teacher      User          @relation("TeacherClasses", fields: [teacherId], references: [id], onDelete: Cascade)
   focusTopicId String?
   focusTopic   GrammarTopic? @relation("ClassFocusTopic", fields: [focusTopicId], references: [id], onDelete: SetNull)
+  isArchived   Boolean       @default(false)
+  archivedAt   DateTime?
   createdAt    DateTime      @default(now())
 
   members      ClassMember[]
@@ -71,6 +74,7 @@ model GrammarTopic {
   bufferedQuestions QuestionBuffer[]
   attempts          StudentAttempt[]
   progressRecords   StudentTopicProgress[]
+  questionFlags     TeacherQuestionFlag[]
 }
 
 model QuestionBuffer {
@@ -119,4 +123,23 @@ model StudentTopicProgress {
   topic              GrammarTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
 
   @@unique([userId, topicId])
+}
+
+model TeacherQuestionFlag {
+  id             String       @id @default(uuid())
+  studentId      String
+  topicId        String
+  questionText   String
+  studentAnswer  String
+  correctAnswer  String
+  explanation    String?
+  studentComment String?
+  status         String       @default("PENDING") // PENDING, RESOLVED
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  student        User         @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  topic          GrammarTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, topicId, status])
 }
