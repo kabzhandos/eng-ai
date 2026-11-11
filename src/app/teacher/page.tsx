@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import {
   Users,
   Plus,
@@ -26,6 +27,7 @@ import {
   ArrowRightLeft,
   X,
   Mail,
+  FileText,
 } from 'lucide-react';
 import StudentDossierModal, { StudentDossier } from '@/components/StudentDossierModal';
 import TeacherMetricsSettingsModal, {
@@ -553,6 +555,16 @@ export default function TeacherDashboard() {
                   <div className="flex items-center flex-wrap gap-2">
                     {!cls.isArchived ? (
                       <>
+                        {/* AI Class Report (PDF) */}
+                        <Link
+                          href={`/teacher/report/${cls.id}`}
+                          title="Сформировать методический ИИ-отчёт с экспортом в PDF"
+                          className="btn-tactile flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-amber-300 dark:border-amber-800/70 bg-amber-50/80 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 text-xs font-bold shadow-2xs hover:bg-amber-100"
+                        >
+                          <FileText className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                          <span>ИИ-отчёт (PDF)</span>
+                        </Link>
+
                         {/* Add Student Button */}
                         <button
                           onClick={() => {
@@ -598,6 +610,15 @@ export default function TeacherDashboard() {
                       </>
                     ) : (
                       <>
+                        <Link
+                          href={`/teacher/report/${cls.id}`}
+                          title="Сформировать методический ИИ-отчёт с экспортом в PDF"
+                          className="btn-tactile flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-[#19202E] text-stone-700 dark:text-stone-300 text-xs font-bold shadow-2xs"
+                        >
+                          <FileText className="w-3.5 h-3.5 text-stone-500" />
+                          <span>ИИ-отчёт (PDF)</span>
+                        </Link>
+
                         <button
                           onClick={() => handleToggleArchiveClass(cls.id, false)}
                           title="Восстановить класс из архива"

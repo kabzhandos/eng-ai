@@ -56,3 +56,39 @@ body {
   transform: translateY(2px);
   border-bottom-width: 1px;
 }
+
+/* Print Styles for PDF Export */
+@media print {
+  header,
+  footer,
+  .ambient-glow,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    font-size: 10.5pt !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  main {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .print-card {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    page-break-inside: avoid;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
+}
