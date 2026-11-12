@@ -19,8 +19,21 @@ import {
   Send,
   Check,
   MessageSquare,
+  RotateCcw,
+  BarChart3,
+  Award,
 } from 'lucide-react';
 import { QuestionPayload, CefrLevel } from '@/types';
+
+const MAX_QUESTIONS_PER_MODULE = 20;
+
+interface SessionQuestionRecord {
+  questionNumber: number;
+  questionText: string;
+  studentAnswer: string;
+  correctAnswer: string;
+  isCorrect: boolean;
+}
 
 interface TopicInfo {
   id: string;
@@ -49,11 +62,36 @@ export default function PracticePage() {
     consecutiveCorrect: number;
   } | null>(null);
 
+  // 20-Question Module Session State
+  const [questionNumber, setQuestionNumber] = useState<number>(1);
+  const [sessionCorrectCount, setSessionCorrectCount] = useState<number>(0);
+  const [sessionHistory, setSessionHistory] = useState<SessionQuestionRecord[]>([]);
+  const [isModuleFinished, setIsModuleFinished] = useState<boolean>(false);
+
   // Ask Teacher state
   const [showAskModal, setShowAskModal] = useState(false);
   const [teacherNote, setTeacherNote] = useState('');
   const [sendingFlag, setSendingFlag] = useState(false);
   const [flagSubmitted, setFlagSubmitted] = useState(false);
+
+  // Restore session from sessionStorage if student returns or refreshes
+  useEffect(() => {
+    if (!topicId) return;
+    try {
+      const saved = sessionStorage.getItem(`engai_module_session_${topicId}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.questionNumber && parsed.questionNumber <= MAX_QUESTIONS_PER_MODULE) {
+          setQuestionNumber(parsed.questionNumber);
+          setSessionCorrectCount(parsed.sessionCorrectCount || 0);
+          setSessionHistory(parsed.sessionHistory || []);
+          if (parsed.isModuleFinished) {
+            setIsModuleFinished(true);
+          }
+        }
+      }
+    } catch {}
+  }, [topicId]);
 
   const fetchQuestion = async () => {
     setLoading(true);
@@ -116,11 +154,80 @@ export default function PracticePage() {
 
       const data = await res.json();
       setResult(data);
+
+      const isCorrect = Boolean(data.isCorrect);
+      const newCorrectCount = isCorrect ? sessionCorrectCount + 1 : sessionCorrectCount;
+      const historyItem: SessionQuestionRecord = {
+        questionNumber,
+        questionText: question.question,
+        studentAnswer: finalAnswer.trim(),
+        correctAnswer: question.correctAnswer,
+        isCorrect,
+      };
+      const updatedHistory = [...sessionHistory, historyItem];
+
+      setSessionCorrectCount(newCorrectCount);
+      setSessionHistory(updatedHistory);
+
+      try {
+        sessionStorage.setItem(
+          `engai_module_session_${topicId}`,
+          JSON.stringify({
+            questionNumber,
+            sessionCorrectCount: newCorrectCount,
+            sessionHistory: updatedHistory,
+            isModuleFinished: false,
+          })
+        );
+      } catch {}
     } catch (e) {
       console.error(e);
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleNextOrFinish = () => {
+    if (questionNumber >= MAX_QUESTIONS_PER_MODULE) {
+      setIsModuleFinished(true);
+      try {
+        sessionStorage.setItem(
+          `engai_module_session_${topicId}`,
+          JSON.stringify({
+            questionNumber: MAX_QUESTIONS_PER_MODULE,
+            sessionCorrectCount,
+            sessionHistory,
+            isModuleFinished: true,
+          })
+        );
+      } catch {}
+    } else {
+      const nextNum = questionNumber + 1;
+      setQuestionNumber(nextNum);
+      try {
+        sessionStorage.setItem(
+          `engai_module_session_${topicId}`,
+          JSON.stringify({
+            questionNumber: nextNum,
+            sessionCorrectCount,
+            sessionHistory,
+            isModuleFinished: false,
+          })
+        );
+      } catch {}
+      fetchQuestion();
+    }
+  };
+
+  const handleRestartModule = () => {
+    setQuestionNumber(1);
+    setSessionCorrectCount(0);
+    setSessionHistory([]);
+    setIsModuleFinished(false);
+    try {
+      sessionStorage.removeItem(`engai_module_session_${topicId}`);
+    } catch {}
+    fetchQuestion();
   };
 
   const handleSendToTeacher = async (e: React.FormEvent) => {
@@ -152,6 +259,167 @@ export default function PracticePage() {
       setSendingFlag(false);
     }
   };
+
+  // Module Completion Screen (20 questions reached)
+  if (isModuleFinished && topic) {
+    const accuracyPercent = Math.round((sessionCorrectCount / MAX_QUESTIONS_PER_MODULE) * 100);
+    const xpEarned = sessionCorrectCount * 10;
+
+    let evaluationTitle = 'Модуль успешно пройден! 🎉';
+    let evaluationBadge = 'Базовый уровень';
+    let evaluationDesc = 'Рекомендуется повторить сложные правила и пройти модуль ещё раз для закрепления.';
+    let evaluationBadgeClass = 'text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40';
+
+    if (accuracyPercent >= 90) {
+      evaluationTitle = 'Блестящий результат! 🌟';
+      evaluationBadge = 'Отличное освоение темы';
+      evaluationDesc = 'Грамматическая тема усвоена на высоком уровне. Отличная уверенность в правилах и примерах!';
+      evaluationBadgeClass = 'text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40';
+    } else if (accuracyPercent >= 70) {
+      evaluationTitle = 'Хорошая работа! 👍';
+      evaluationBadge = 'Уверенное владение';
+      evaluationDesc = 'Большинство правил понято верно. Обрати внимание на разобранные ошибки перед следующей темой.';
+      evaluationBadgeClass = 'text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/40';
+    }
+
+    return (
+      <div className="flex-1 flex flex-col max-w-2xl mx-auto w-full py-4 sm:py-8 animate-in fade-in duration-300">
+        {/* Celebration Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/80 mb-4 shadow-sm">
+            <Trophy className="w-8 h-8 text-amber-500" />
+          </div>
+          <div>
+            <span className={`inline-block text-xs font-bold px-3 py-1 rounded-full border mb-3 ${evaluationBadgeClass}`}>
+              {evaluationBadge}
+            </span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-900 dark:text-stone-50 tracking-tight">
+            {evaluationTitle}
+          </h1>
+          <p className="text-sm font-semibold text-stone-500 dark:text-stone-400 mt-1.5">
+            Модуль [{topic.level}] {topic.title} завершён ({MAX_QUESTIONS_PER_MODULE} заданий)
+          </p>
+          <p className="text-xs text-stone-500 dark:text-stone-400 max-w-md mx-auto mt-2 leading-relaxed">
+            {evaluationDesc}
+          </p>
+        </div>
+
+        {/* 3 KPI Cards */}
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          <div className="p-4 rounded-3xl bg-white dark:bg-[#19202E] border border-[#EEE8DE] dark:border-[#273145] text-center shadow-xs">
+            <span className="block text-[11px] font-medium text-stone-400 mb-1">Точность</span>
+            <div className="text-xl sm:text-2xl font-black text-indigo-600 dark:text-indigo-400">
+              {accuracyPercent}%
+            </div>
+            <span className="text-[10px] text-stone-400 block mt-0.5">
+              {sessionCorrectCount} из {MAX_QUESTIONS_PER_MODULE}
+            </span>
+          </div>
+
+          <div className="p-4 rounded-3xl bg-white dark:bg-[#19202E] border border-[#EEE8DE] dark:border-[#273145] text-center shadow-xs">
+            <span className="block text-[11px] font-medium text-stone-400 mb-1">Опыт (XP)</span>
+            <div className="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 flex items-center justify-center gap-1">
+              <span>+{xpEarned}</span>
+            </div>
+            <span className="text-[10px] text-stone-400 block mt-0.5">
+              за верные ответы
+            </span>
+          </div>
+
+          <div className="p-4 rounded-3xl bg-white dark:bg-[#19202E] border border-[#EEE8DE] dark:border-[#273145] text-center shadow-xs">
+            <span className="block text-[11px] font-medium text-stone-400 mb-1">Заданий</span>
+            <div className="text-xl sm:text-2xl font-black text-stone-800 dark:text-stone-200">
+              {MAX_QUESTIONS_PER_MODULE}
+            </div>
+            <span className="text-[10px] text-stone-400 block mt-0.5">
+              100% пройдено
+            </span>
+          </div>
+        </div>
+
+        {/* Question History Breakdown */}
+        {sessionHistory.length > 0 && (
+          <div className="bg-white dark:bg-[#19202E] border border-[#EEE8DE] dark:border-[#273145] rounded-3xl p-5 sm:p-6 mb-6 shadow-xs">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#EEE8DE] dark:border-[#273145]">
+              <h3 className="text-xs sm:text-sm font-extrabold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                <span>Обзор 20 выполненных заданий</span>
+              </h3>
+              <span className="text-[11px] text-stone-400 font-medium">
+                {sessionCorrectCount} верно / {sessionHistory.length - sessionCorrectCount} ош.
+              </span>
+            </div>
+
+            <div className="space-y-2.5 max-h-[320px] overflow-y-auto pr-1">
+              {sessionHistory.map((item, idx) => (
+                <div
+                  key={idx}
+                  className={`p-3 rounded-2xl border text-xs flex items-start gap-3 transition-all ${
+                    item.isCorrect
+                      ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/50 text-emerald-950 dark:text-emerald-200'
+                      : 'bg-rose-50/40 dark:bg-rose-950/20 border-rose-100 dark:border-rose-900/50 text-rose-950 dark:text-rose-200'
+                  }`}
+                >
+                  <div className="mt-0.5 shrink-0">
+                    {item.isCorrect ? (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                    ) : (
+                      <XCircle className="w-4 h-4 text-rose-500 dark:text-rose-400" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-stone-900 dark:text-stone-100 leading-snug">
+                      <span className="font-bold text-stone-400 mr-1.5">#{item.questionNumber}</span>
+                      {item.questionText}
+                    </div>
+                    {!item.isCorrect && (
+                      <div className="mt-1 flex flex-wrap gap-2 text-[11px]">
+                        <span className="text-rose-600 dark:text-rose-400">
+                          Твой ответ: <strong className="font-mono">{item.studentAnswer || '—'}</strong>
+                        </span>
+                        <span className="text-emerald-600 dark:text-emerald-400">
+                          Правильно: <strong className="font-mono">{item.correctAnswer}</strong>
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+          <Link
+            href="/"
+            className="btn-tactile w-full sm:w-auto px-5 py-3 rounded-2xl border border-[#EEE8DE] dark:border-[#273145] bg-white dark:bg-[#19202E] text-stone-700 dark:text-stone-300 text-xs font-bold hover:bg-[#FBF9F5] flex items-center justify-center gap-2 shadow-xs"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Вернуться к темам</span>
+          </Link>
+
+          <div className="flex items-center gap-2.5 w-full sm:w-auto">
+            <Link
+              href="/analytics"
+              className="btn-tactile w-full sm:w-auto px-4 py-3 rounded-2xl border border-[#EEE8DE] dark:border-[#273145] bg-white dark:bg-[#19202E] text-stone-700 dark:text-stone-300 text-xs font-bold hover:bg-[#FBF9F5] flex items-center justify-center gap-1.5 shadow-xs"
+            >
+              <BarChart3 className="w-4 h-4 text-indigo-500" />
+              <span>Аналитика</span>
+            </Link>
+
+            <button
+              onClick={handleRestartModule}
+              className="btn-tactile w-full sm:w-auto px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Пройти модуль заново</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -201,6 +469,50 @@ export default function PracticePage() {
           <span className="text-xs font-bold text-stone-800 dark:text-stone-200 truncate max-w-[220px]">
             {topic.title}
           </span>
+        </div>
+      </div>
+
+      {/* Module 20-Question Progress Bar */}
+      <div className="mb-5 bg-white dark:bg-[#19202E] border border-[#EEE8DE] dark:border-[#273145] rounded-2xl p-4 shadow-2xs">
+        <div className="flex items-center justify-between text-xs mb-2.5">
+          <div className="flex items-center gap-2">
+            <span className="font-extrabold text-stone-800 dark:text-stone-200">
+              Вопрос {questionNumber} из {MAX_QUESTIONS_PER_MODULE}
+            </span>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800/50">
+              Модуль
+            </span>
+          </div>
+          <div className="flex items-center gap-3 text-stone-500 dark:text-stone-400 font-medium text-[11px]">
+            <span>
+              Верно:{' '}
+              <strong className="text-emerald-600 dark:text-emerald-400 font-bold">
+                {sessionCorrectCount}
+              </strong>{' '}
+              / {result ? questionNumber : questionNumber - 1}
+            </span>
+            <span>
+              Осталось:{' '}
+              <strong>
+                {Math.max(0, MAX_QUESTIONS_PER_MODULE - (result ? questionNumber : questionNumber - 1))}
+              </strong>
+            </span>
+          </div>
+        </div>
+        {/* Progress track */}
+        <div className="w-full h-2 rounded-full bg-[#EEE8DE] dark:bg-[#273145] overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 rounded-full transition-all duration-300"
+            style={{
+              width: `${Math.min(
+                100,
+                Math.max(
+                  5,
+                  (((result ? questionNumber : questionNumber - 1)) / MAX_QUESTIONS_PER_MODULE) * 100
+                )
+              )}%`,
+            }}
+          />
         </div>
       </div>
 
@@ -407,19 +719,30 @@ export default function PracticePage() {
               <button
                 onClick={handleSubmit}
                 disabled={!activeAnswer?.trim() || submitting}
-                className="btn-tactile w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-indigo-600 text-white font-bold text-sm shadow-sm transition-all disabled:opacity-40"
+                className="btn-tactile w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-sm transition-all disabled:opacity-40 cursor-pointer active:scale-95"
               >
                 {submitting ? 'Проверяем...' : 'Проверить ответ'}
               </button>
             ) : (
               <button
-                onClick={fetchQuestion}
-                className="btn-tactile w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-indigo-600 text-white font-bold text-sm shadow-sm transition-all flex items-center justify-center gap-2"
+                onClick={handleNextOrFinish}
+                className="btn-tactile w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
               >
-                <span>
-                  {result.isCorrect ? 'Следующее задание' : 'Отработать ошибку (Новый пример)'}
-                </span>
-                <ArrowRight className="w-4 h-4" />
+                {questionNumber >= MAX_QUESTIONS_PER_MODULE ? (
+                  <>
+                    <Trophy className="w-4 h-4 text-amber-300" />
+                    <span>Завершить модуль ({MAX_QUESTIONS_PER_MODULE}/20)</span>
+                  </>
+                ) : (
+                  <>
+                    <span>
+                      {result.isCorrect
+                        ? `Следующий вопрос (${questionNumber + 1} из ${MAX_QUESTIONS_PER_MODULE})`
+                        : `Отработать ошибку (${questionNumber + 1} из ${MAX_QUESTIONS_PER_MODULE})`}
+                    </span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
               </button>
             )}
           </div>

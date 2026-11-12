@@ -126,8 +126,19 @@ export default function TeacherDashboard() {
         return;
       }
       const data = await res.json();
-      setClasses(data.classes || []);
+      const updatedClasses = data.classes || [];
+      setClasses(updatedClasses);
       setAllTopics(data.allTopics || []);
+
+      // Keep dossier modal in sync if open
+      setSelectedStudent((current) => {
+        if (!current) return null;
+        for (const cls of updatedClasses) {
+          const found = cls.students?.find((s: StudentDossier) => s.id === current.id);
+          if (found) return found;
+        }
+        return current;
+      });
     } catch (e) {
       console.error(e);
     } finally {
@@ -1051,12 +1062,14 @@ export default function TeacherDashboard() {
       )}
 
       {/* Student Deep-Dive Dossier Modal */}
-      <StudentDossierModal
-        student={selectedStudent}
-        allTopics={allTopics}
-        onClose={() => setSelectedStudent(null)}
-        onFlagStatusChange={fetchData}
-      />
+      {selectedStudent && (
+        <StudentDossierModal
+          student={selectedStudent}
+          allTopics={allTopics}
+          onClose={() => setSelectedStudent(null)}
+          onFlagStatusChange={fetchData}
+        />
+      )}
 
       {/* Metrics Preferences Modal */}
       <TeacherMetricsSettingsModal

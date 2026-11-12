@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   X,
   User,
@@ -14,6 +14,7 @@ import {
   HelpCircle,
   MessageSquare,
   Check,
+  Loader2,
 } from 'lucide-react';
 
 interface StudentTopicRecord {
@@ -89,29 +90,53 @@ export default function StudentDossierModal({
   const [updatingFlagId, setUpdatingFlagId] = useState<string | null>(null);
   const [flags, setFlags] = useState<QuestionFlagRecord[]>(student?.questionFlags || []);
 
+  useEffect(() => {
+    if (student) {
+      setFlags(student.questionFlags || []);
+    }
+  }, [student]);
+
   if (!student) return null;
 
   const mistakes = student.recentAttempts.filter((a) => !a.isCorrect);
-  const currentFlags = flags.length > 0 ? flags : student.questionFlags || [];
+  const currentFlags = flags;
   const pendingFlags = currentFlags.filter((f) => f.status === 'PENDING');
 
   const handleToggleFlagStatus = async (flagId: string, currentStatus: string) => {
     const nextStatus = currentStatus === 'PENDING' ? 'RESOLVED' : 'PENDING';
     setUpdatingFlagId(flagId);
+
+    // Optimistically update the UI immediately
+    setFlags((prev) =>
+      prev.map((f) => (f.id === flagId ? { ...f, status: nextStatus } : f))
+    );
+
     try {
       const res = await fetch('/api/questions/flag', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ flagId, status: nextStatus }),
       });
-      if (res.ok) {
+
+      if (!res.ok) {
+        // Rollback on failure
         setFlags((prev) =>
-          prev.map((f) => (f.id === flagId ? { ...f, status: nextStatus } : f))
+          prev.map((f) => (f.id === flagId ? { ...f, status: currentStatus } : f))
         );
-        if (onFlagStatusChange) onFlagStatusChange();
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || 'Не удалось обновить статус вопроса');
+        return;
+      }
+
+      if (onFlagStatusChange) {
+        onFlagStatusChange();
       }
     } catch (e) {
-      console.error(e);
+      console.error('Error toggling flag status:', e);
+      // Rollback on network error
+      setFlags((prev) =>
+        prev.map((f) => (f.id === flagId ? { ...f, status: currentStatus } : f))
+      );
     } finally {
       setUpdatingFlagId(null);
     }
@@ -324,16 +349,22 @@ export default function StudentDossierModal({
                       <div className="flex items-center gap-2">
                         <span>{new Date(flag.createdAt).toLocaleDateString()}</span>
                         <button
+                          type="button"
                           disabled={updatingFlagId === flag.id}
                           onClick={() => handleToggleFlagStatus(flag.id, flag.status)}
-                          className={`px-2.5 py-1 rounded-xl text-[10px] font-bold transition-all flex items-center gap-1 ${
+                          className={`cursor-pointer px-2.5 py-1 rounded-xl text-[10px] font-bold transition-all flex items-center gap-1.5 shadow-2xs ${
                             flag.status === 'PENDING'
-                              ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-xs'
-                              : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+                              ? 'bg-amber-500 hover:bg-amber-600 active:scale-95 text-white'
+                              : 'bg-emerald-100 hover:bg-emerald-200 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 dark:hover:bg-emerald-900/60'
                           }`}
+                          title={flag.status === 'PENDING' ? 'Отметить как разобрано' : 'Нажмите, чтобы вернуть в активные'}
                         >
-                          <Check className="w-3 h-3" />
-                          <span>{flag.status === 'PENDING' ? 'Отметить как разобрано' : 'Разобрано'}</span>
+                          {updatingFlagId === flag.id ? (
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                          ) : (
+                            <Check className="w-3 h-3" />
+                          )}
+                          <span>{flag.status === 'PENDING' ? 'Отметить как разобрано' : 'Разобрано ✓'}</span>
                         </button>
                       </div>
                     </div>
